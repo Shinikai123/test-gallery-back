@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppDataSource = void 0;
 const typeorm_1 = require("typeorm");
-const User_1 = require("./entity/User");
+const User_entity_1 = require("./entity/User.entity");
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "postgres",
     host: "localhost",
@@ -12,6 +12,6 @@ exports.AppDataSource = new typeorm_1.DataSource({
     database: "test-gallery",
     synchronize: true,
     logging: true,
-    entities: [User_1.User],
+    entities: [User_entity_1.User],
     migrations: [],
 });

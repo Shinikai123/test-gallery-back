@@ -11,14 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userGetByIdAction = void 0;
 const typeorm_1 = require("typeorm");
-const User_1 = require("../entity/User");
+const User_entity_1 = require("../entity/User.entity");
 /**
  * Loads user by a given id.
  */
 function userGetByIdAction(request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         // get a user repository to perform operations with user
-        const userRepository = (0, typeorm_1.getManager)().getRepository(User_1.User);
+        const userRepository = (0, typeorm_1.getManager)().getRepository(User_entity_1.User);
         const { id } = request.params;
         // load a user by a given post id
         // const user = await userRepository.findOne(request.params.id);

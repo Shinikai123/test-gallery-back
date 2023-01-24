@@ -11,14 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userSaveAction = void 0;
 const typeorm_1 = require("typeorm");
-const User_1 = require("../entity/User");
+const User_entity_1 = require("../entity/User.entity");
 /**
  * Saves given post.
  */
 function userSaveAction(request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         // get a post repository to perform operations with post
-        const userRepository = (0, typeorm_1.getManager)().getRepository(User_1.User);
+        const userRepository = (0, typeorm_1.getManager)().getRepository(User_entity_1.User);
         // create a real post object from post json object sent over http
         const newUser = userRepository.create(request.body);
         // save received post

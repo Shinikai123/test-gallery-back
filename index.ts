@@ -1,12 +1,9 @@
 import "reflect-metadata";
 import {createConnection} from "typeorm";
 import {Request, Response} from "express";
-import express from "express";
-import bodyParser from "body-parser";
+import * as express from "express";
+import * as bodyParser from "body-parser";
 import {AppRoutes} from "./src/routes";
-import {userSaveAction} from "./src/controller/UserSaveAction";
-import { userGetAllAction } from "./src/controller/UserGetAllAction";
-import { userGetByIdAction } from "./src/controller/UserGetByIdAction";
 
 // create connection with database
 // note that it's not active database connection
@@ -14,13 +11,18 @@ import { userGetByIdAction } from "./src/controller/UserGetByIdAction";
 createConnection().then(async connection => {
 
     // create express app
+    const express = require("express")
     const app = express();
     app.use(bodyParser.json());
 
-    app["get"]('/users', userGetAllAction)
-    app["get"]('/user/:id', userGetByIdAction)
-    app["post"]('/users', userSaveAction)
-
+    // register all application routes
+    AppRoutes.forEach(route => {
+        app[route.method](route.path, (request: Request, response: Response, next: Function) => {
+            route.action(request, response)
+                .then(() => next)
+                .catch(err => next(err));
+        });
+    });
 
     // run app
     app.listen(8000);

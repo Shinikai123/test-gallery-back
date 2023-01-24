@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import {getManager} from "typeorm";
-import {User} from "../entity/User";
+import {User} from "../entity/User.entity";
 
 /**
  * Loads all users from the database.
