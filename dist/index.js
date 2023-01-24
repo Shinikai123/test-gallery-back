@@ -44,6 +44,7 @@ const routes_1 = require("./src/routes");
     const express = require("express");
     const app = express();
     app.use(bodyParser.json());
+    const PORT = process.env.PORT;
     // register all application routes
     routes_1.AppRoutes.forEach(route => {
         app[route.method](route.path, (request, response, next) => {
@@ -54,5 +55,5 @@ const routes_1 = require("./src/routes");
     });
     // run app
     app.listen(8000);
-    console.log("Express application is up and running on port 8000");
+    console.log(`Express application is up and running on port ${PORT}`);
 })).catch(error => console.log("TypeORM connection error: ", error));

@@ -1,7 +1,6 @@
 import "reflect-metadata";
 import {createConnection} from "typeorm";
 import {Request, Response} from "express";
-import * as express from "express";
 import * as bodyParser from "body-parser";
 import {AppRoutes} from "./src/routes";
 
@@ -14,6 +13,7 @@ createConnection().then(async connection => {
     const express = require("express")
     const app = express();
     app.use(bodyParser.json());
+    const PORT = process.env.PORT;
 
     // register all application routes
     AppRoutes.forEach(route => {
@@ -27,6 +27,6 @@ createConnection().then(async connection => {
     // run app
     app.listen(8000);
 
-    console.log("Express application is up and running on port 8000");
+    console.log(`Express application is up and running on port ${PORT}`);
 
 }).catch(error => console.log("TypeORM connection error: ", error));
