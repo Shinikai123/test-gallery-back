@@ -1,7 +1,7 @@
 import {userGetAllAction} from "./controller/UserGetAllAction";
 import {userGetByIdAction} from "./controller/UserGetByIdAction";
 import {userSaveAction} from "./controller/UserSaveAction";
-
+import { UserController } from "./controller/userController";
 /**
  * All application routes.
  */
