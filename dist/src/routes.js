@@ -19,7 +19,7 @@ exports.AppRoutes = [
         action: UserGetByIdAction_1.userGetByIdAction
     },
     {
-        path: "/users",
+        path: "/users/registration",
         method: "post",
         action: UserSaveAction_1.userSaveAction
     }

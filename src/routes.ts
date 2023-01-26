@@ -1,7 +1,6 @@
 import {userGetAllAction} from "./controller/UserGetAllAction";
 import {userGetByIdAction} from "./controller/UserGetByIdAction";
 import {userSaveAction} from "./controller/UserSaveAction";
-import { UserController } from "./controller/userController";
 /**
  * All application routes.
  */
@@ -17,7 +16,7 @@ export const AppRoutes = [
         action: userGetByIdAction
     },
     {
-        path: "/users",
+        path: "/users/registration",
         method: "post",
         action: userSaveAction
     }
