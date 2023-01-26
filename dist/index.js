@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,21 +11,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const typeorm_1 = require("typeorm");
-const bodyParser = __importStar(require("body-parser"));
+const cors = require('cors');
+const knex = require('knex');
+const express = require("express");
+require('dotenv').config();
 // create connection with database
 // note that it's not active database connection
 // TypeORM creates connection pools and uses them for your requests
 (0, typeorm_1.createConnection)().then((connection) => __awaiter(void 0, void 0, void 0, function* () {
     // create express app
-    const knex = require('knex');
-    const express = require("express");
-    const cors = require('cors');
-    const app = express();
-    app.use(bodyParser.json());
-    app.use(cors());
-    app.use(express.urlencoded({ extended: false }));
-    app.use(express.json());
-    const PORT = process.env.PORT || 8000;
     const db = knex({
         client: 'pg',
         connection: {
@@ -58,6 +29,11 @@ const bodyParser = __importStar(require("body-parser"));
             database: process.env.DB_NAME
         },
     });
+    const app = express();
+    app.use(cors());
+    app.use(express.urlencoded({ extended: false }));
+    app.use(express.json());
+    const PORT = process.env.PORT || 8000;
     app.get('/users', (req, res) => {
         db.select('*')
             .from('users')
@@ -69,7 +45,7 @@ const bodyParser = __importStar(require("body-parser"));
             console.log(err);
         });
     });
-    app.get('/user/:userID', (req, res) => {
+    app.get('/users/:userID', (req, res) => {
         const userID = req.params.userID;
         db.select('*')
             .from('users')
@@ -82,19 +58,17 @@ const bodyParser = __importStar(require("body-parser"));
             console.log(err);
         });
     });
-    app.post('/users/registration', (req, res) => {
-        const { userID, userName, userEmail, userPassword, signupDate } = req.body;
+    app.post('/users/add-user', (req, res) => {
+        const { userName, userEmail, userPassword } = req.body;
         db('users')
             .insert({
-            id: userID,
             user_name: userName,
             user_email: userEmail,
             password: userPassword,
-            signup_date: signupDate,
         })
             .then(() => {
             console.log('user added');
-            return res.json({ msg: 'user added' });
+            return res.redirect('http://127.0.0.1:5173/login');
         })
             .catch((err) => {
             console.log(err);
@@ -115,11 +89,10 @@ const bodyParser = __importStar(require("body-parser"));
             console.log(err);
         });
     });
-    // DELETE: Delete movie by movieId from the database
     app.put('/users/update-user', (req, res) => {
         db('users')
             .where('user_name', '=', 'Test')
-            .update({ movie_name: 'Admin' })
+            .update({ user_name: 'Admin' })
             .then(() => {
             console.log('user updated');
             return res.json({ msg: 'user updated' });
