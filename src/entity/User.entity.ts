@@ -2,6 +2,9 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from "typeor
 
 @Entity ("users")
     export class User {
+        static findByIdAndUpdate(id: any, user: any, arg2: { new: boolean; }) {
+            throw new Error("Method not implemented.");
+        }
         @PrimaryGeneratedColumn("uuid")
         id: string;
 

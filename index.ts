@@ -1,7 +1,7 @@
 import "reflect-metadata";
+import {AppDataSource} from "./src/data-source";
 import {createConnection} from "typeorm";
 import {Request, Response} from "express";
-import {AppRoutes} from "./src/routes";
 const cors = require('cors');
 const knex = require('knex');
 const express = require("express");
@@ -13,6 +13,9 @@ require('dotenv').config();
 createConnection().then(async connection => {
 
     // create express app
+
+    AppDataSource.initialize()
+    .then(() => {})
 
     const db = knex({
         client: 'pg',

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
+const data_source_1 = require("./src/data-source");
 const typeorm_1 = require("typeorm");
 const cors = require('cors');
 const knex = require('knex');
@@ -20,6 +21,8 @@ require('dotenv').config();
 // TypeORM creates connection pools and uses them for your requests
 (0, typeorm_1.createConnection)().then((connection) => __awaiter(void 0, void 0, void 0, function* () {
     // create express app
+    data_source_1.AppDataSource.initialize()
+        .then(() => { });
     const db = knex({
         client: 'pg',
         connection: {

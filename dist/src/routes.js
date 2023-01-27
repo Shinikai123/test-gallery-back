@@ -1,26 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppRoutes = void 0;
-const UserGetAllAction_1 = require("./controller/UserGetAllAction");
-const UserGetByIdAction_1 = require("./controller/UserGetByIdAction");
-const UserSaveAction_1 = require("./controller/UserSaveAction");
-/**
- * All application routes.
- */
-exports.AppRoutes = [
-    {
-        path: "/users",
-        method: "get",
-        action: UserGetAllAction_1.userGetAllAction
-    },
-    {
-        path: "/user/:id",
-        method: "get",
-        action: UserGetByIdAction_1.userGetByIdAction
-    },
-    {
-        path: "/users/registration",
-        method: "post",
-        action: UserSaveAction_1.userSaveAction
-    }
-];
+const express_1 = __importDefault(require("express"));
+const UserController_1 = __importDefault(require("./controller/UserController"));
+const router = (0, express_1.default)();
+router.post('/users', UserController_1.default.createUser);
+router.get('/users', UserController_1.default.getAllUsers);
+router.get('/users/:id', UserController_1.default.getOneUser);
+router.put('/users', UserController_1.default.updateUser);
+router.delete('/users/:id', UserController_1.default.deleteUser);
+exports.default = router;

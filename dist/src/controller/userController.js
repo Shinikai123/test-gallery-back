@@ -8,89 +8,71 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserController = void 0;
-const userService = require('../service/user-service');
-const { validationResult } = require('express-validator');
+const typeorm_1 = require("typeorm");
+const User_entity_1 = require("../entity/User.entity");
+const UserService_1 = __importDefault(require("../service/UserService"));
 class UserController {
-    registration(req, res, next) {
+    constructor() {
+        this.userRepository = (0, typeorm_1.getRepository)(User_entity_1.User);
+    }
+    createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const errors = validationResult(req);
-                if (!errors.isEmpty()) {
-                    return next('Ошибка при валидации', errors.array());
-                }
-                const { nickname, email, password } = req.body;
-                const userData = yield userService.registration(nickname, email, password);
-                res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
-                return res.json(userData);
+                const user = yield UserService_1.default.createUser(req.body);
+                res.json(user);
             }
             catch (e) {
-                next(e);
+                res.status(500).json(e);
             }
         });
     }
-    login(req, res, next) {
+    getAllUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { nickname, email, password } = req.body;
-                const userData = yield userService.login(nickname, email, password);
-                res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
-                return res.json(userData);
-            }
-            catch (e) {
-                next(e);
-            }
-        });
-    }
-    logout(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { refreshToken } = req.cookies;
-                const token = yield userService.logout(refreshToken);
-                res.clearCookie('refreshToken');
-                return res.json(token);
-            }
-            catch (e) {
-                next(e);
-            }
-        });
-    }
-    activate(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const activationLink = req.params.link;
-                yield userService.activate(activationLink);
-                return res.redirect(process.env.CLIENT_URL);
-            }
-            catch (e) {
-                next(e);
-            }
-        });
-    }
-    refresh(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { refreshToken } = req.cookies;
-                const userData = yield userService.refresh(refreshToken);
-                res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
-                return res.json(userData);
-            }
-            catch (e) {
-                next(e);
-            }
-        });
-    }
-    getUsers(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const users = yield userService.getAllUsers();
+                const users = yield UserService_1.default.getAllUsers();
                 return res.json(users);
             }
             catch (e) {
-                next(e);
+                res.status(500).json(e);
+            }
+        });
+    }
+    getOneUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield UserService_1.default.getOneUser(req.params.id);
+                return res.json(user);
+            }
+            catch (e) {
+                res.status(500).json(e);
+            }
+        });
+    }
+    updateUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const updatedUser = yield UserService_1.default.updateUser(req.body);
+                return res.json(updatedUser);
+            }
+            catch (e) {
+                res.status(500).json(e.message);
+            }
+        });
+    }
+    deleteUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield UserService_1.default.createUser(req.params.id);
+                return res.json(user);
+            }
+            catch (e) {
+                res.status(500).json(e);
             }
         });
     }
 }
-exports.UserController = UserController;
+exports.default = new UserController();
