@@ -9,20 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userGetAllAction = void 0;
-const typeorm_1 = require("typeorm");
-const User_entity_1 = require("../entity/User.entity");
-/**
- * Loads all users from the database.
- */
-function userGetAllAction(request, response) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // get a user repository to perform operations with user
-        const userRepository = (0, typeorm_1.getManager)().getRepository(User_entity_1.User);
-        // load users
-        const users = yield userRepository.find();
-        // return loaded users
-        response.send(users);
-    });
-}
-exports.userGetAllAction = userGetAllAction;
+exports.getTokens = void 0;
+const express_1 = require("express");
+const index_1 = require("../../../index");
+const Token_entity_1 = require("../../entity/Token.entity");
+const router = (0, express_1.Router)();
+exports.getTokens = router;
+router.get('/tokens', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const users = yield index_1.dbManager.find(Token_entity_1.Token);
+    return res.status(200).json(users);
+}));

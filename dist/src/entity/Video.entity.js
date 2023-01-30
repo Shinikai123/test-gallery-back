@@ -9,41 +9,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.Video = void 0;
 const typeorm_1 = require("typeorm");
-const Video_entity_1 = require("./Video.entity");
-const Token_entity_1 = require("./Token.entity");
-let User = class User {
+const User_entity_1 = require("./User.entity");
+let Video = class Video {
 };
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], User.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ name: "user_name" }),
-    __metadata("design:type", String)
-], User.prototype, "user_name", void 0);
+], Video.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "user_email", void 0);
+], Video.prototype, "title", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "password", void 0);
+], Video.prototype, "url", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(type => Video_entity_1.Video, video => video.owner),
-    __metadata("design:type", Array)
-], User.prototype, "video", void 0);
+    (0, typeorm_1.Column)({ name: "is_private" }),
+    __metadata("design:type", Boolean)
+], Video.prototype, "isPrivate", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(type => Token_entity_1.Token, token => token.user),
-    __metadata("design:type", Token_entity_1.Token)
-], User.prototype, "token", void 0);
-__decorate([
-    (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
-], User.prototype, "signup_date", void 0);
-User = __decorate([
-    (0, typeorm_1.Entity)("users")
-], User);
-exports.User = User;
+    (0, typeorm_1.ManyToOne)(type => User_entity_1.User, user => user.video),
+    (0, typeorm_1.JoinColumn)({ name: 'owner_id' }),
+    __metadata("design:type", User_entity_1.User)
+], Video.prototype, "owner", void 0);
+Video = __decorate([
+    (0, typeorm_1.Entity)("video")
+], Video);
+exports.Video = Video;

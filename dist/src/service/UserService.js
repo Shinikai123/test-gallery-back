@@ -9,46 +9,74 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserService = void 0;
 const User_entity_1 = require("../entity/User.entity");
+const index_1 = require("../../index");
+const TokenService_1 = require("./TokenService");
+const bcrypt_1 = require("../utils/bcrypt");
+const tokenService = new TokenService_1.TokenService();
 class UserService {
-    createUser(user) {
+    refreshToken(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createdUser = yield User_entity_1.User.create(user);
-            return createdUser;
+            if (!refreshToken) {
+                throw new Error('auth error (!refreshToken)');
+            }
+            const userData = tokenService.validateRefreshToken(refreshToken);
+            const tokenFromDB = yield tokenService.findToken(refreshToken);
+            if (!userData || !tokenFromDB) {
+                throw new Error('auth error (!userData || !tokenFromDB)');
+            }
+            const { id } = userData;
+            const user = yield index_1.dbManager.findOne(User_entity_1.User, { where: { id } });
+            const tokens = tokenService.generateTokens(user);
+            yield tokenService.saveToken(user, tokens.refreshToken);
+            return Object.assign(Object.assign({}, tokens), user);
+        });
+    }
+    registerUser(user_name, user_email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const hashedPassword = yield (0, bcrypt_1.hashPassword)(password);
+            const user = index_1.dbManager.create(User_entity_1.User, { user_name, user_email, password: hashedPassword });
+            const { accessToken, refreshToken, expires_in } = tokenService.generateTokens(user);
+            yield tokenService.saveToken(user, refreshToken);
+            return Object.assign(Object.assign({}, user), { refreshToken, accessToken, expires_in });
+        });
+    }
+    loginUser(user_email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield index_1.dbManager.findOne(User_entity_1.User, { where: { user_email } });
+            if (!user) {
+                return { error: 'User not found' };
+            }
+            const isValid = yield (0, bcrypt_1.comparePassword)(password, user.password);
+            if (!isValid) {
+                return { error: 'check out your password' };
+            }
+            const tokens = tokenService.generateTokens(user);
+            yield tokenService.saveToken(user, tokens.refreshToken);
+            return Object.assign({ id: user.id, user_name: user.user_name, user_email: user.user_email }, tokens);
+        });
+    }
+    logoutUser(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield tokenService.removeToken(refreshToken);
         });
     }
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
-            const users = yield User_entity_1.User.find();
-            return users;
+            return yield index_1.dbManager.find(User_entity_1.User);
         });
     }
-    getOneUser(id) {
+    getUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!id) {
-                throw new Error('не указан ID');
+            try {
+                const user = yield index_1.dbManager.findOne(User_entity_1.User, { where: { id } });
+                return user.user_name;
             }
-            const user = yield User_entity_1.User.findById(id);
-            return user;
-        });
-    }
-    updateUser(user) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!user.id) {
-                throw new Error('не указан ID');
+            catch (e) {
+                return { error: e.message };
             }
-            const updatedUser = yield User_entity_1.User.findByIdAndUpdate(user.id, user, { new: true });
-            return updatedUser;
-        });
-    }
-    deleteUser(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!id) {
-                throw new Error('не указан ID');
-            }
-            const user = yield User_entity_1.User.findByIdAndDelete(id);
-            return user;
         });
     }
 }
-exports.default = new UserService();
+exports.UserService = UserService;

@@ -1,55 +1,86 @@
-import { getRepository } from "typeorm";
+import { dbManager } from "../..";
+import {NextFunction, Request, Response} from "express";
 import { User } from "../entity/User.entity";
-import  UserService from "../service/UserService";
+import {TokenService} from "../service/TokenService";
+import{UserService} from "../service/UserService";
 
-class UserController {
+const tokenService = new TokenService();
+const userService = new UserService();
 
-    private userRepository = getRepository(User)
+export class UserController {
+ async registerUser(req : Request, res: Response, next: NextFunction) {
+    try{
+        const {user_name, user_email, password} = req.body;
+        const compareUser = await dbManager.findOne(User, {where: {user_email}});
 
-    async createUser(req, res){
-        try {
-            const user = await UserService.createUser(req.body)
-            res.json(user)
-        } catch (e) {
-            res.status(500).json(e)
+        if(compareUser) {
+            return res.status(409).send({error: 'User with this email already exists'});
         }
-    }
+        const userData = await userService.registerUser(user_name, user_email, password)
 
-    async getAllUsers(req, res) {
-        try {
-            const users = await UserService.getAllUsers();
-            return res.json(users);
-        } catch (e) {
-            res.status(500).json(e)
-        }
+        res.cookie('refreshToken', userData.refreshToken, {maxAge: 24 * 60 * 60 *1000, httpOnly: true})
+        return res.status(201).send({
+            ...userData
+        });
+    } catch (e) {
+        next(e);
     }
+ }
 
-    async getOneUser(req,res) {
-        try{
-            const user = await UserService.getOneUser(req.params.id)
-            return res.json(user)
-        } catch(e) {
-            res.status(500).json(e)
-        }
-    }
+ async loginUser(req, res, next) {
+    try {
+        const {user_email, password} = req.body;
+        const userData = await userService.loginUser(user_email, password);
 
-    async updateUser(req, res) {
-        try{
-            const updatedUser = await UserService.updateUser(req.body);
-            return res.json(updatedUser);
-        } catch (e) {
-            res.status(500).json(e.message)
-        }
+        // @ts-ignore
+        res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+        return res.json(userData);
+    } catch (e) {
+        next(e);
     }
+ }
 
-    async deleteUser(req, res) {
-        try{
-            const user = await UserService.createUser(req.params.id);
-            return res.json(user)
-        } catch(e) {
-            res.status(500).json(e)
-        }
+ async logoutUser( req : Request, res: Response, next: NextFunction) {
+    try{
+        const {refreshToken} = req.cookies. refreshToken;
+        const token = await userService.logoutUser(refreshToken);
+        res.clearCookie('refreshToken');
+        return res.status(200).json(token);
+    } catch (e) {
+        next()
     }
+ }
+
+ async refresh(req: Request, res: Response, next: NextFunction) {
+    try{
+        const refreshToken = req.cookies. refreshToken;
+        const userData = await userService.refreshToken(refreshToken);
+        res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+        return res.json(userData);
+    } catch (e) {
+        next(e);
+    }
+ }
+
+ async getAllUsers(req: Request, res: Response, next: NextFunction) {
+    try{
+        const users = await userService.getAllUsers()
+        return res.json(users)
+    } catch (e) {
+        next(e);
+    }
+ }
+
+ async getUser(req : Request, res : Response, next : NextFunction) {
+    const {id} = req.params;
+    try{
+        const userData = await userService.getUserById(id)
+        if(userData.err) {
+            return res.json({err: "User not found"})
+        }
+        return res.json({id, user_email: userData})
+    } catch (e) {
+        next(e)
+    }
+ }
 }
-
-export default new UserController();

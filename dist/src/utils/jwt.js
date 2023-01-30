@@ -23,9 +23,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createJwtToken = void 0;
+exports.createJWT = void 0;
 const jwt = __importStar(require("jsonwebtoken"));
-const createJwtToken = (user) => {
+const createJWT = (user) => {
     const payload = {
         id: user.id,
         user_name: user.user_name,
@@ -33,4 +33,4 @@ const createJwtToken = (user) => {
     };
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
 };
-exports.createJwtToken = createJwtToken;
+exports.createJWT = createJWT;

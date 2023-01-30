@@ -8,102 +8,51 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.dbManager = exports.dbConnection = void 0;
+const express_1 = __importDefault(require("express"));
 require("reflect-metadata");
-const data_source_1 = require("./src/data-source");
 const typeorm_1 = require("typeorm");
+const body_parser_1 = require("body-parser");
+const registerUser_1 = require("./src/routes/users/registerUser");
+const loginUser_1 = require("./src/routes/users/loginUser");
+const logoutUser_1 = require("./src/routes/users/logoutUser");
+const getAllUsers_1 = require("./src/routes/users/getAllUsers");
+const getUser_1 = require("./src/routes/users/getUser");
+const getTokens_1 = require("./src/routes/token/getTokens");
+const refresh_1 = require("./src/routes/token/refresh");
+const ormconfig_1 = __importDefault(require("./ormconfig"));
 const cors = require('cors');
-const knex = require('knex');
-const express = require("express");
-require('dotenv').config();
 // create connection with database
 // note that it's not active database connection
 // TypeORM creates connection pools and uses them for your requests
-(0, typeorm_1.createConnection)().then((connection) => __awaiter(void 0, void 0, void 0, function* () {
-    // create express app
-    data_source_1.AppDataSource.initialize()
-        .then(() => { });
-    const db = knex({
-        client: 'pg',
-        connection: {
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME
-        },
-    });
-    const app = express();
-    app.use(cors());
-    app.use(express.urlencoded({ extended: false }));
-    app.use(express.json());
-    const PORT = process.env.PORT || 8000;
-    app.get('/users', (req, res) => {
-        db.select('*')
-            .from('users')
-            .then((data) => {
-            console.log(data);
-            res.json(data);
-        })
-            .catch((err) => {
-            console.log(err);
-        });
-    });
-    app.get('/users/:userID', (req, res) => {
-        const userID = req.params.userID;
-        db.select('*')
-            .from('users')
-            .where('id', '=', userID)
-            .then((data) => {
-            console.log(data);
-            res.json(data);
-        })
-            .catch((err) => {
-            console.log(err);
-        });
-    });
-    app.post('/users/add-user', (req, res) => {
-        const { userName, userEmail, userPassword } = req.body;
-        db('users')
-            .insert({
-            user_name: userName,
-            user_email: userEmail,
-            password: userPassword,
-        })
-            .then(() => {
-            console.log('user added');
-            return res.redirect('http://127.0.0.1:5173/login');
-        })
-            .catch((err) => {
-            console.log(err);
-        });
-    });
-    app.delete('/users/delete-user', (req, res) => {
-        const userID = req.body;
-        const userIDToDelete = Number(userID.userID);
-        console.log(userIDToDelete);
-        db('users')
-            .where('id', '=', userIDToDelete)
-            .del()
-            .then(() => {
-            console.log('user deleted');
-            return res.json({ msg: 'user deleted' });
-        })
-            .catch((err) => {
-            console.log(err);
-        });
-    });
-    app.put('/users/update-user', (req, res) => {
-        db('users')
-            .where('user_name', '=', 'Test')
-            .update({ user_name: 'Admin' })
-            .then(() => {
-            console.log('user updated');
-            return res.json({ msg: 'user updated' });
-        })
-            .catch((err) => {
-            console.log(err);
-        });
-    });
+const getDBConnection = () => __awaiter(void 0, void 0, void 0, function* () {
+    let dbConnection;
+    try {
+        console.log(ormconfig_1.default);
+        dbConnection = yield (0, typeorm_1.createConnection)(ormconfig_1.default);
+        app.use(cors({
+            allowedHeaders: ['localhost:8000']
+        }));
+        app.use(registerUser_1.registerUser);
+        app.use(getAllUsers_1.getAllUsers);
+        app.use(loginUser_1.loginUser);
+        app.use(logoutUser_1.logoutUser);
+        app.use(getTokens_1.getTokens);
+        app.use(refresh_1.refreshToken);
+        app.use(getUser_1.getUser);
+        app.use(express_1.default.urlencoded({ extended: false }));
+        app.use((0, body_parser_1.json)());
+        app.listen(PORT);
+        console.log(`Server is running at http://localhost:${PORT}`);
+    }
+    catch (err) {
+        (err.message);
+    }
+    return dbConnection;
     // register all application routes
     // AppRoutes.forEach(route => {
     //     app[route.method](route.path, (request: Request, response: Response, next: Function) => {
@@ -112,7 +61,10 @@ require('dotenv').config();
     //             .catch(err => next(err));
     //     });
     // });
-    // run app
-    app.listen(8000);
-    console.log(`Express application is up and running on port ${PORT}`);
-})).catch(error => console.log("TypeORM connection error: ", error));
+});
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    exports.dbConnection = yield getDBConnection();
+    exports.dbManager = exports.dbConnection.manager;
+}))();
+const app = (0, express_1.default)();
+const PORT = process.env.PORT || 8000;

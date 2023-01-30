@@ -1,14 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, OneToOne } from "typeorm";
+import {Video} from "./Video.entity";
+import {Token} from "./Token.entity";
 
 @Entity ("users")
     export class User {
-        static findByIdAndUpdate(id: any, user: any, arg2: { new: boolean; }) {
-            throw new Error("Method not implemented.");
-        }
         @PrimaryGeneratedColumn("uuid")
-        id: string;
+        id: number;
 
-        @Column()
+        @Column({name: "user_name"})
         user_name : string;
 
         @Column()
@@ -16,6 +15,12 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from "typeor
 
         @Column()
         password: string;
+
+        @OneToMany(type => Video, video => video.owner)
+        video: Video[];
+
+        @OneToOne(type => Token, token => token.user)
+        token: Token;
 
         @CreateDateColumn()
         signup_date : Date;
