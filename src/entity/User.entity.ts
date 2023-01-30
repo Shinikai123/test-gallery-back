@@ -3,25 +3,25 @@ import {Video} from "./Video.entity";
 import {Token} from "./Token.entity";
 
 @Entity ("users")
-    export class User {
-        @PrimaryGeneratedColumn("uuid")
-        id: number;
+export class User {
+    @PrimaryGeneratedColumn("uuid")
+    id: number;
 
-        @Column({name: "user_name"})
-        user_name : string;
+    @Column({name: "user_name"})
+    user_name : string;
 
-        @Column()
-        user_email : string;
+    @Column()
+    user_email : string;
 
-        @Column()
-        password: string;
+    @Column()
+    password: string;
 
-        @OneToMany(type => Video, video => video.owner)
-        video: Video[];
+    @OneToMany(type => Video, video => video.owner)
+    video: Video[];
 
-        @OneToOne(type => Token, token => token.user)
-        token: Token;
+    @OneToOne(type => Token, token => token.user)
+    token: Token;
 
-        @CreateDateColumn()
-        signup_date : Date;
-    }
+    @CreateDateColumn()
+    signup_date : Date;
+}
