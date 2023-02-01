@@ -9,14 +9,16 @@ const userService = new UserService();
 
 export class UserController {
  async registerUser(req : Request, res: Response, next: NextFunction) {
+    
     try{
-        const {user_name, user_email, password} = req.body;
-        const compareUser = await dbManager.findOne(User, {where: {user_email}});
+        
+        const {userName, userEmail, password} = req.body;
+        const compareUser = await dbManager.findOne(User, {where: {userEmail}});
 
         if(compareUser) {
             return res.status(409).send({error: 'User with this email already exists'});
         }
-        const userData = await userService.registerUser(user_name, user_email, password)
+        const userData = await userService.registerUser(userName, userEmail, password)
 
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 24 * 60 * 60 *1000, httpOnly: true})
         return res.status(201).send({
@@ -29,8 +31,8 @@ export class UserController {
 
  async loginUser(req, res, next) {
     try {
-        const {user_email, password} = req.body;
-        const userData = await userService.loginUser(user_email, password);
+        const {userEmail, password} = req.body;
+        const userData = await userService.loginUser(userEmail, password);
 
         // @ts-ignore
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
@@ -78,7 +80,7 @@ export class UserController {
         if(userData.err) {
             return res.json({err: "User not found"})
         }
-        return res.json({id, user_email: userData})
+        return res.json({id, userEmail: userData})
     } catch (e) {
         next(e)
     }

@@ -31,6 +31,6 @@ const createJWT = (user) => {
         user_name: user.user_name,
         user_email: user.user_email
     };
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+    return jwt.sign(payload, process.env.JWT_SECRET || '');
 };
 exports.createJWT = createJWT;

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const UserController_1 = require("../controller/UserController");
+const getTokens_1 = require("./token/getTokens");
 const router = (0, express_1.Router)();
 const userController = new UserController_1.UserController();
 router.post('/register', userController.registerUser),
@@ -9,5 +10,6 @@ router.post('/register', userController.registerUser),
     router.get('/logout', userController.logoutUser),
     router.get('/users', userController.getAllUsers),
     router.get('/users/:id', userController.getUser),
-    router.get('/refresh', userController.refresh);
+    router.get('/refresh', userController.refresh),
+    router.get('/tokens', getTokens_1.getTokens);
 exports.default = router;

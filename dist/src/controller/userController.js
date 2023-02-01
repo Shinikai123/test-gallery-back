@@ -20,12 +20,12 @@ class UserController {
     registerUser(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { user_name, user_email, password } = req.body;
-                const compareUser = yield __1.dbManager.findOne(User_entity_1.User, { where: { user_email } });
+                const { userName, userEmail, password } = req.body;
+                const compareUser = yield __1.dbManager.findOne(User_entity_1.User, { where: { userEmail } });
                 if (compareUser) {
                     return res.status(409).send({ error: 'User with this email already exists' });
                 }
-                const userData = yield userService.registerUser(user_name, user_email, password);
+                const userData = yield userService.registerUser(userName, userEmail, password);
                 res.cookie('refreshToken', userData.refreshToken, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
                 return res.status(201).send(Object.assign({}, userData));
             }
@@ -37,8 +37,8 @@ class UserController {
     loginUser(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { user_email, password } = req.body;
-                const userData = yield userService.loginUser(user_email, password);
+                const { userEmail, password } = req.body;
+                const userData = yield userService.loginUser(userEmail, password);
                 // @ts-ignore
                 res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
                 return res.json(userData);
@@ -93,7 +93,7 @@ class UserController {
                 if (userData.err) {
                     return res.json({ err: "User not found" });
                 }
-                return res.json({ id, user_email: userData });
+                return res.json({ id, userEmail: userData });
             }
             catch (e) {
                 next(e);

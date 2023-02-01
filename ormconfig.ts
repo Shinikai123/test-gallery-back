@@ -1,6 +1,5 @@
 import { ConnectionOptions } from "typeorm";
-import dotenv from 'dotenv';
-dotenv.config()
+require('dotenv').config();
 
 export = {
   type: process.env.DB_TYPE,
@@ -12,7 +11,4 @@ export = {
   database: process.env.DB_NAME || "test-gallery",
   synchronize: false,
   entities: [__dirname + '/src/entity/**.entity.{ts,js}'],
-  cli : {
-    entitiesDir: 'dist/src/**/**.entity.js'
-  }
 } as ConnectionOptions

@@ -1,5 +1,6 @@
 import {Router} from "express";
 import {UserController}from "../controller/UserController";
+import { getTokens } from "./token/getTokens";
 
 const router = Router();
 const userController = new UserController()
@@ -9,6 +10,7 @@ router.post('/login', userController.loginUser),
 router.get('/logout', userController.logoutUser),
 router.get('/users', userController.getAllUsers),
 router.get('/users/:id', userController.getUser),
-router.get('/refresh', userController.refresh)
+router.get('/refresh', userController.refresh),
+router.get('/tokens', getTokens)
     
 export default router;

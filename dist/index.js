@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -17,35 +40,38 @@ const express_1 = __importDefault(require("express"));
 require("reflect-metadata");
 const typeorm_1 = require("typeorm");
 const body_parser_1 = require("body-parser");
-const registerUser_1 = require("./src/routes/users/registerUser");
-const loginUser_1 = require("./src/routes/users/loginUser");
-const logoutUser_1 = require("./src/routes/users/logoutUser");
-const getAllUsers_1 = require("./src/routes/users/getAllUsers");
-const getUser_1 = require("./src/routes/users/getUser");
-const getTokens_1 = require("./src/routes/token/getTokens");
-const refresh_1 = require("./src/routes/token/refresh");
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
+// import { registerUser } from './src/routes/users/registerUser';
+// import { loginUser } from './src/routes/users/loginUser';
+// import { logoutUser } from './src/routes/users/logoutUser';
+// import { getAllUsers } from './src/routes/users/getAllUsers';
+// import { getUser } from './src/routes/users/getUser';
+// import { getTokens } from './src/routes/token/getTokens';
+// import { refreshToken } from './src/routes/token/refresh';
 const ormconfig_1 = __importDefault(require("./ormconfig"));
+const routes_1 = __importDefault(require("./src/routes/routes"));
+const dotenv = __importStar(require("dotenv"));
 const cors = require('cors');
-// create connection with database
-// note that it's not active database connection
-// TypeORM creates connection pools and uses them for your requests
+dotenv.config();
 const getDBConnection = () => __awaiter(void 0, void 0, void 0, function* () {
     let dbConnection;
     try {
-        console.log(ormconfig_1.default);
         dbConnection = yield (0, typeorm_1.createConnection)(ormconfig_1.default);
         app.use(cors({
             allowedHeaders: ['localhost:8000']
         }));
-        app.use(registerUser_1.registerUser);
-        app.use(getAllUsers_1.getAllUsers);
-        app.use(loginUser_1.loginUser);
-        app.use(logoutUser_1.logoutUser);
-        app.use(getTokens_1.getTokens);
-        app.use(refresh_1.refreshToken);
-        app.use(getUser_1.getUser);
         app.use(express_1.default.urlencoded({ extended: false }));
         app.use((0, body_parser_1.json)());
+        app.use((0, cookie_parser_1.default)());
+        console.log(process.env.JWT_SECRET);
+        app.use(routes_1.default);
+        // app.use(registerUser);
+        // app.use(getAllUsers);
+        // app.use(loginUser);
+        // app.use(logoutUser);
+        // app.use(getTokens);
+        // app.use(refreshToken);
+        // app.use(getUser);
         app.listen(PORT);
         console.log(`Server is running at http://localhost:${PORT}`);
     }
@@ -53,14 +79,6 @@ const getDBConnection = () => __awaiter(void 0, void 0, void 0, function* () {
         (err.message);
     }
     return dbConnection;
-    // register all application routes
-    // AppRoutes.forEach(route => {
-    //     app[route.method](route.path, (request: Request, response: Response, next: Function) => {
-    //         route.action(request, response)
-    //             .then(() => next)
-    //             .catch(err => next(err));
-    //     });
-    // });
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
     exports.dbConnection = yield getDBConnection();

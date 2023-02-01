@@ -26,9 +26,9 @@ export class UserService{
         return {...tokens, ...user}
     }
 
-    async registerUser(user_name, user_email, password) {
+    async registerUser(userName, userEmail, password) {
         const hashedPassword = await hashPassword(password);
-        const user = dbManager.create(User, {user_name, user_email, password : hashedPassword});
+        const user = dbManager.create(User, {userName, userEmail, password : hashedPassword});
 
         const {accessToken, refreshToken, expires_in} = tokenService.generateTokens(user);
         await tokenService.saveToken(user, refreshToken);
@@ -36,8 +36,8 @@ export class UserService{
         return {...user, refreshToken, accessToken, expires_in}
     }
 
-    async loginUser(user_email, password){
-        const user = await dbManager.findOne(User, {where: {user_email}});
+    async loginUser(userEmail, password){
+        const user = await dbManager.findOne(User, {where: {userEmail}});
         if(!user){
             return{error : 'User not found'}
         }
@@ -50,8 +50,8 @@ export class UserService{
         await tokenService.saveToken(user, tokens.refreshToken);
         return {
             id: user.id,
-            user_name: user.user_name,
-            user_email: user.user_email,
+            userName: user.user_name,
+            userEmail: user.user_email,
             ...tokens
         };
     }
