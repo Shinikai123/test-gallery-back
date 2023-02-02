@@ -2,6 +2,7 @@ import { User } from "../entity/User.entity";
 import { dbManager } from "../../index";
 import { TokenService } from "./TokenService";
 import { comparePassword, hashPassword } from "../utils/bcrypt";
+import { Token } from "../entity/Token.entity";
 
 const tokenService = new TokenService()
 
@@ -26,9 +27,11 @@ export class UserService{
         return {...tokens, ...user}
     }
 
-    async registerUser(userName, userEmail, password) {
+    async registerUser(user_name, user_email, password) {
         const hashedPassword = await hashPassword(password);
-        const user = dbManager.create(User, {userName, userEmail, password : hashedPassword});
+
+        const user = dbManager.create(User, {user_name, user_email, password : hashedPassword});
+        await dbManager.save(user); 
 
         const {accessToken, refreshToken, expires_in} = tokenService.generateTokens(user);
         await tokenService.saveToken(user, refreshToken);
@@ -36,8 +39,8 @@ export class UserService{
         return {...user, refreshToken, accessToken, expires_in}
     }
 
-    async loginUser(userEmail, password){
-        const user = await dbManager.findOne(User, {where: {userEmail}});
+    async loginUser(user_email, password){
+        const user = await dbManager.findOne(User, {where: {user_email}});
         if(!user){
             return{error : 'User not found'}
         }
@@ -50,8 +53,8 @@ export class UserService{
         await tokenService.saveToken(user, tokens.refreshToken);
         return {
             id: user.id,
-            userName: user.user_name,
-            userEmail: user.user_email,
+            user_name: user.user_name,
+            user_email: user.user_email,
             ...tokens
         };
     }

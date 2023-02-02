@@ -9,6 +9,6 @@ export = {
   username: process.env.DB_USERNAME || "postgres",
   password: process.env.DB_PASSWORD || "1111",
   database: process.env.DB_NAME || "test-gallery",
-  synchronize: false,
+  synchronize: true,
   entities: [__dirname + '/src/entity/**.entity.{ts,js}'],
 } as ConnectionOptions

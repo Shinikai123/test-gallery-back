@@ -7,8 +7,8 @@ export class TokenService {
     generateTokens(user : User) {
         const payload = {
             id: user.id,
-            userName : user.user_name,
-            userEmail : user.user_email
+            user_name : user.user_name,
+            user_email : user.user_email
         };
         const accessToken = jwt.sign(payload, "1234-abcd-5678-efgh", {expiresIn: '30m'});
         const refreshToken = jwt.sign(payload, "1234-abcd-5678-efgh", {expiresIn: '21d'})

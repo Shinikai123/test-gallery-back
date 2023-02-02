@@ -33,18 +33,18 @@ class UserService {
             return Object.assign(Object.assign({}, tokens), user);
         });
     }
-    registerUser(user_name, user_email, password) {
+    registerUser(userName, userEmail, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const hashedPassword = yield (0, bcrypt_1.hashPassword)(password);
-            const user = index_1.dbManager.create(User_entity_1.User, { user_name, user_email, password: hashedPassword });
+            const user = index_1.dbManager.create(User_entity_1.User, { userName, userEmail, password: hashedPassword });
             const { accessToken, refreshToken, expires_in } = tokenService.generateTokens(user);
             yield tokenService.saveToken(user, refreshToken);
             return Object.assign(Object.assign({}, user), { refreshToken, accessToken, expires_in });
         });
     }
-    loginUser(user_email, password) {
+    loginUser(userEmail, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield index_1.dbManager.findOne(User_entity_1.User, { where: { user_email } });
+            const user = yield index_1.dbManager.findOne(User_entity_1.User, { where: { userEmail } });
             if (!user) {
                 return { error: 'User not found' };
             }
@@ -54,7 +54,7 @@ class UserService {
             }
             const tokens = tokenService.generateTokens(user);
             yield tokenService.saveToken(user, tokens.refreshToken);
-            return Object.assign({ id: user.id, user_name: user.user_name, user_email: user.user_email }, tokens);
+            return Object.assign({ id: user.id, userName: user.user_name, userEmail: user.user_email }, tokens);
         });
     }
     logoutUser(refreshToken) {

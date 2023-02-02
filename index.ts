@@ -22,17 +22,18 @@ const cors = require('cors');
 dotenv.config()
 
 const getDBConnection = async () => {
-    let dbConnection: Connection
+    const app: Express = express();
+    const PORT = process.env.PORT || 8000;
 
     try{
-        dbConnection = await createConnection(ORMConfig)
-        app.use(cors({
-            allowedOrigins: ['localhost:5173']
-        }));
+        
         app.use(express.urlencoded({ extended: false}));
         app.use(json());
         app.use(cookieParser())
-        console.log(process.env.JWT_SECRET);
+        app.use(cors({
+            origin: 'http://localhost:5173',
+            credentials: true
+          }));
                    
         app.use(router)
         // app.use(registerUser);
@@ -48,7 +49,6 @@ const getDBConnection = async () => {
     } catch (err : any) {
         (err.message)
     }
-    return dbConnection!;
 
 }
 
@@ -56,9 +56,7 @@ export let dbConnection : Connection;
 export let dbManager;
 
 (async () => {
-    dbConnection = await getDBConnection();
+    await getDBConnection();
+    dbConnection = await createConnection(ORMConfig)
     dbManager = dbConnection.manager;
 })()
-
-const app: Express = express();
-const PORT = process.env.PORT || 8000;

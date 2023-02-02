@@ -10,9 +10,4 @@ module.exports = {
     database: process.env.DB_NAME || "test-gallery",
     synchronize: false,
     entities: [__dirname + '/src/entity/**.entity.{ts,js}'],
-    migrations: [__dirname + '/src/migration/*.{ts, js}'],
-    cli: {
-        entitiesDir: "src/entity",
-        migrationsDir: "src/migration",
-    }
 };

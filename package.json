@@ -2,7 +2,7 @@
   "name": "test-gallery-back",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "tsc": "tsc",
     "watch": "tsc --watch",
@@ -20,14 +20,14 @@
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^6.14.3",
     "jsonwebtoken": "^9.0.0",
     "knex": "^2.4.2",
     "nodemailer": "^6.9.0",
     "uuid": "^9.0.0",
-    "winston": "^3.8.2",
-    "dotenv": "^16.0.3"
+    "winston": "^3.8.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

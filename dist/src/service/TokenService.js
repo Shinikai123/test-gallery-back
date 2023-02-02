@@ -40,8 +40,8 @@ class TokenService {
     generateTokens(user) {
         const payload = {
             id: user.id,
-            user_name: user.user_name,
-            user_email: user.user_email
+            userName: user.user_name,
+            userEmail: user.user_email
         };
         const accessToken = jwt.sign(payload, "1234-abcd-5678-efgh", { expiresIn: '30m' });
         const refreshToken = jwt.sign(payload, "1234-abcd-5678-efgh", { expiresIn: '21d' });
@@ -75,7 +75,7 @@ class TokenService {
     }
     validateRefreshToken(token) {
         try {
-            const userData = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+            const userData = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET || '');
             return userData;
         }
         catch (e) {

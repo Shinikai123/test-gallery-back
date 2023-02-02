@@ -41,6 +41,10 @@ require("reflect-metadata");
 const typeorm_1 = require("typeorm");
 const body_parser_1 = require("body-parser");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const ormconfig_1 = __importDefault(require("./ormconfig"));
+const routes_1 = __importDefault(require("./src/routes/routes"));
+const dotenv = __importStar(require("dotenv"));
+const cors = require('cors');
 // import { registerUser } from './src/routes/users/registerUser';
 // import { loginUser } from './src/routes/users/loginUser';
 // import { logoutUser } from './src/routes/users/logoutUser';
@@ -48,17 +52,13 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 // import { getUser } from './src/routes/users/getUser';
 // import { getTokens } from './src/routes/token/getTokens';
 // import { refreshToken } from './src/routes/token/refresh';
-const ormconfig_1 = __importDefault(require("./ormconfig"));
-const routes_1 = __importDefault(require("./src/routes/routes"));
-const dotenv = __importStar(require("dotenv"));
-const cors = require('cors');
 dotenv.config();
 const getDBConnection = () => __awaiter(void 0, void 0, void 0, function* () {
     let dbConnection;
     try {
         dbConnection = yield (0, typeorm_1.createConnection)(ormconfig_1.default);
         app.use(cors({
-            allowedHeaders: ['localhost:8000']
+            allowedOrigins: ['localhost:5173']
         }));
         app.use(express_1.default.urlencoded({ extended: false }));
         app.use((0, body_parser_1.json)());

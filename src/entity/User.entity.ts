@@ -5,7 +5,7 @@ import {Token} from "./Token.entity";
 @Entity ("users")
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id: string;
 
     @Column({name: "user_name"})
     user_name : string;
