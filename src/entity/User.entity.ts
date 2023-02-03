@@ -1,9 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, OneToOne } from "typeorm";
-import {Video} from "./Video.entity";
-import {Token} from "./Token.entity";
+import {VideoEntity} from "./index";
+import {TokenEntity} from "./index";
 
 @Entity ("users")
-export class User {
+export class UserEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
@@ -16,11 +16,11 @@ export class User {
     @Column()
     password: string;
 
-    @OneToMany(type => Video, video => video.owner)
-    video: Video[];
+    @OneToMany(type => VideoEntity, video => video.owner)
+    video: VideoEntity[];
 
-    @OneToOne(type => Token, token => token.user)
-    token: Token;
+    @OneToOne(type => TokenEntity, token => token.user)
+    token: TokenEntity;
 
     @CreateDateColumn()
     signup_date : Date;

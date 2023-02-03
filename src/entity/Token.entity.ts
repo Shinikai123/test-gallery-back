@@ -1,15 +1,15 @@
 import {Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn} from 'typeorm';
-import { User } from './User.entity';
+import { UserEntity } from './index';
 
 @Entity()
-export class Token {
+export class TokenEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
   token: string;
 
-  @OneToOne(type => User, user => user.token)
+  @OneToOne(type => UserEntity, user => user.token)
   @JoinColumn({name:"userId"})
-  user: User;
+  user: UserEntity;
 }

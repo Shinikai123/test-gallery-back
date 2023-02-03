@@ -1,8 +1,8 @@
 import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
-import {User} from "./User.entity";
+import {UserEntity } from "./index";
 
 @Entity("video")
-export class Video {
+export class VideoEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -15,7 +15,7 @@ export class Video {
   @Column({name: "is_private"})
   isPrivate: boolean;
 
-  @ManyToOne(type => User, user => user.video)
+  @ManyToOne(type => UserEntity, user => user.video)
   @JoinColumn({ name: 'owner_id' })
-  owner: User;
+  owner: UserEntity;
 }

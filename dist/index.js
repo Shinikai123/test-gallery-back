@@ -41,8 +41,8 @@ require("reflect-metadata");
 const typeorm_1 = require("typeorm");
 const body_parser_1 = require("body-parser");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const ormconfig_1 = __importDefault(require("./ormconfig"));
-const routes_1 = __importDefault(require("./src/routes/routes"));
+const typeorm_2 = require("./config/typeorm");
+const routes_1 = __importDefault(require("./routes/routes"));
 const dotenv = __importStar(require("dotenv"));
 const cors = require('cors');
 // import { registerUser } from './src/routes/users/registerUser';
@@ -54,16 +54,16 @@ const cors = require('cors');
 // import { refreshToken } from './src/routes/token/refresh';
 dotenv.config();
 const getDBConnection = () => __awaiter(void 0, void 0, void 0, function* () {
-    let dbConnection;
+    const app = (0, express_1.default)();
+    const PORT = process.env.PORT || 8000;
     try {
-        dbConnection = yield (0, typeorm_1.createConnection)(ormconfig_1.default);
-        app.use(cors({
-            allowedOrigins: ['localhost:5173']
-        }));
         app.use(express_1.default.urlencoded({ extended: false }));
         app.use((0, body_parser_1.json)());
         app.use((0, cookie_parser_1.default)());
-        console.log(process.env.JWT_SECRET);
+        app.use(cors({
+            origin: 'http://localhost:5173',
+            credentials: true
+        }));
         app.use(routes_1.default);
         // app.use(registerUser);
         // app.use(getAllUsers);
@@ -78,11 +78,9 @@ const getDBConnection = () => __awaiter(void 0, void 0, void 0, function* () {
     catch (err) {
         (err.message);
     }
-    return dbConnection;
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    exports.dbConnection = yield getDBConnection();
+    yield getDBConnection();
+    exports.dbConnection = yield (0, typeorm_1.createConnection)(typeorm_2.ORMConfig);
     exports.dbManager = exports.dbConnection.manager;
 }))();
-const app = (0, express_1.default)();
-const PORT = process.env.PORT || 8000;
