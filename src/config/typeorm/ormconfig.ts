@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { ConnectionOptions } from "typeorm";
-require('dotenv').config();
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export const ORMConfig =  {
   type: process.env.DB_TYPE,
@@ -11,5 +12,5 @@ export const ORMConfig =  {
   password: process.env.DB_PASSWORD || "1111",
   database: process.env.DB_NAME || "test-gallery",
   synchronize: true,
-  entities: [__dirname + '/src/entity/**.entity.{ts,js}'],
+  entities: [__dirname + '/../../entity/*.entity.{ts,js}'],
 } as ConnectionOptions

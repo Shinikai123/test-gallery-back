@@ -10,6 +10,6 @@ export class TokenEntity {
   token: string;
 
   @OneToOne(type => UserEntity, user => user.token)
-  @JoinColumn({name:"userId"})
+  @JoinColumn({name:"user_id"})
   user: UserEntity;
 }

@@ -13,7 +13,7 @@ exports.userRepository = void 0;
 const __1 = require("..");
 const index_1 = require("../entity/index");
 class UserRepository {
-    createUser(parameters) {
+    registerUser(parameters) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield __1.dbManager.create(index_1.UserEntity, parameters);
             yield __1.dbManager.save(user);

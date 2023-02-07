@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserEntity = void 0;
 const typeorm_1 = require("typeorm");
+const access_entity_1 = require("./access.entity");
 const index_1 = require("./index");
 const index_2 = require("./index");
 let UserEntity = class UserEntity {
@@ -32,13 +33,17 @@ __decorate([
     __metadata("design:type", String)
 ], UserEntity.prototype, "password", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(type => index_1.VideoEntity, video => video.owner),
+    (0, typeorm_1.OneToMany)(type => index_1.VideoEntity, video => video.owner, { onDelete: "CASCADE" }),
     __metadata("design:type", Array)
 ], UserEntity.prototype, "video", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(type => index_2.TokenEntity, token => token.user),
+    (0, typeorm_1.OneToOne)(type => index_2.TokenEntity, token => token.user, { onDelete: "CASCADE" }),
     __metadata("design:type", index_2.TokenEntity)
 ], UserEntity.prototype, "token", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(type => access_entity_1.AccessEntity, access => access.video, { onUpdate: "CASCADE" }),
+    __metadata("design:type", Array)
+], UserEntity.prototype, "accesses", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

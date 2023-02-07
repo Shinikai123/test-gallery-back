@@ -40,8 +40,4 @@ router.post('/upload/:id', upload.single('file'), (req, res, next) => __awaiter(
         console.log(req.file);
         res.json({ message: "success" });
     }
-    //const url = `/users/${id}/`
-    // video.url = req.file.path;
-    // const savedVideo = await dbManager.save(Video, {title, url,});
-    // res.json(savedVideo);
 }));

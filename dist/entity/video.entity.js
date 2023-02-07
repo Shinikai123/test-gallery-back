@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VideoEntity = void 0;
 const typeorm_1 = require("typeorm");
+const access_entity_1 = require("./access.entity");
 const index_1 = require("./index");
 let VideoEntity = class VideoEntity {
 };
@@ -18,6 +19,10 @@ __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
     __metadata("design:type", String)
 ], VideoEntity.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], VideoEntity.prototype, "filename", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -32,9 +37,13 @@ __decorate([
 ], VideoEntity.prototype, "isPrivate", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(type => index_1.UserEntity, user => user.video),
-    (0, typeorm_1.JoinColumn)({ name: 'owner_id' }),
+    (0, typeorm_1.JoinColumn)({ name: 'ownerId' }),
     __metadata("design:type", index_1.UserEntity)
 ], VideoEntity.prototype, "owner", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(type => access_entity_1.AccessEntity, access => access.user),
+    __metadata("design:type", Array)
+], VideoEntity.prototype, "accesses", void 0);
 VideoEntity = __decorate([
     (0, typeorm_1.Entity)("video")
 ], VideoEntity);

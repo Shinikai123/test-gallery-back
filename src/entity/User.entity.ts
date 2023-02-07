@@ -1,6 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, OneToOne } from "typeorm";
+import { AccessEntity } from "./access.entity";
 import {VideoEntity} from "./index";
 import {TokenEntity} from "./index";
+
 
 @Entity ("users")
 export class UserEntity {
@@ -16,11 +18,14 @@ export class UserEntity {
     @Column()
     password: string;
 
-    @OneToMany(type => VideoEntity, video => video.owner)
+    @OneToMany(type => VideoEntity, video => video.owner, {onDelete: "CASCADE"})
     video: VideoEntity[];
 
-    @OneToOne(type => TokenEntity, token => token.user)
+    @OneToOne(type => TokenEntity, token => token.user, {onDelete: "CASCADE"})
     token: TokenEntity;
+
+    @OneToMany(type => AccessEntity, access => access.video, {onUpdate: "CASCADE"})
+    accesses: AccessEntity[];
 
     @CreateDateColumn()
     signup_date : Date;

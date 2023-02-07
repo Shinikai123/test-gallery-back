@@ -1,4 +1,7 @@
-import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
+import { access } from 'fs';
+import { type } from 'os';
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import { AccessEntity } from './access.entity';
 import {UserEntity } from "./index";
 
 @Entity("video")
@@ -7,15 +10,18 @@ export class VideoEntity {
   id: string;
 
   @Column()
+  filename: string;
+
+  @Column()
   title: string;
 
   @Column()
   url: string;
 
-  @Column({name: "is_private"})
-  isPrivate: boolean;
-
   @ManyToOne(type => UserEntity, user => user.video)
-  @JoinColumn({ name: 'owner_id' })
+  @JoinColumn({ name: 'ownerId' })
   owner: UserEntity;
+
+  @OneToMany(type => AccessEntity, access => access.user)
+  accesses: AccessEntity[];
 }

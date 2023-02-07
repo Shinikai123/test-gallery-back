@@ -1,3 +1,4 @@
-export {UserEntity} from './user.entity';
-export {VideoEntity} from './video.entity';
-export {TokenEntity} from "./token.entity";
+export * from './user.entity';
+export * from './video.entity';
+export * from './token.entity';
+export * from './access.entity';

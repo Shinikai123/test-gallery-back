@@ -44,6 +44,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const typeorm_2 = require("./config/typeorm");
 const routes_1 = __importDefault(require("./routes/routes"));
 const dotenv = __importStar(require("dotenv"));
+const config_1 = require("./config");
 const cors = require('cors');
 // import { registerUser } from './src/routes/users/registerUser';
 // import { loginUser } from './src/routes/users/loginUser';
@@ -56,6 +57,7 @@ dotenv.config();
 const getDBConnection = () => __awaiter(void 0, void 0, void 0, function* () {
     const app = (0, express_1.default)();
     const PORT = process.env.PORT || 8000;
+    console.log((0, config_1.validation)(process.env));
     try {
         app.use(express_1.default.urlencoded({ extended: false }));
         app.use((0, body_parser_1.json)());

@@ -9,6 +9,7 @@ import {Request, Response} from "express";
 import router from './routes/routes';
 import { cookie } from 'express-validator';
 import * as dotenv from 'dotenv';
+import { validation } from './config';
 const cors = require('cors');
 
 // import { registerUser } from './src/routes/users/registerUser';
@@ -24,6 +25,7 @@ dotenv.config()
 const getDBConnection = async () => {
     const app: Express = express();
     const PORT = process.env.PORT || 8000;
+    console.log(validation(process.env))
 
     try{
         
