@@ -10,35 +10,60 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VideoController = void 0;
+const video_service_1 = require("../service/video.service");
+const videoService = new video_service_1.VideoService();
 class VideoController {
     uploadVideo(req, res, next) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { id } = req.params;
+            const { title } = req.body;
+            const { id } = req.params;
+            if (!title || !id) {
+                res.sendStatus(401).json({ error: `${title} - ${id}` });
             }
-            catch (e) {
-                console.log(e);
+            else {
+                try {
+                    const filename = (_a = req === null || req === void 0 ? void 0 : req.file) === null || _a === void 0 ? void 0 : _a.filename;
+                    const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${id}/`;
+                    const uploadedVideo = yield videoService.uploadVideo(id, title, url, filename);
+                    res.json(uploadedVideo);
+                }
+                catch (e) {
+                    next(e);
+                    console.log(e);
+                    res.sendStatus(401);
+                }
             }
         });
     }
-    getVideo(req, res, next) {
+    deleteVideo(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
             try {
+                const deletedVideo = yield videoService.deleteVideo(id);
+                res.json(deletedVideo);
             }
             catch (e) {
                 next(e);
+                res.sendStatus(401);
             }
         });
     }
-    ;
-    newVideo(req, res, next) {
+    getAccess(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { video_id } = req.query;
             try {
+                const access = yield videoService.getAccess(id, video_id);
+                console.log(access);
+                res.json(access);
             }
             catch (e) {
                 next(e);
+                res.sendStatus(401);
             }
         });
     }
 }
 exports.VideoController = VideoController;
+exports.default = new VideoController();

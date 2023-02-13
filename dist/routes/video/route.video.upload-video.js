@@ -8,28 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadVideo = void 0;
 const express_1 = require("express");
 const user_controller_1 = require("../../controller/user.controller");
-const multer_1 = __importDefault(require("multer"));
+const multer_1 = require("../../utils/multer");
 const router = (0, express_1.Router)();
 exports.uploadVideo = router;
 const userController = new user_controller_1.UserController();
-const videoStorage = multer_1.default.diskStorage({
-    destination: (req, file, cb) => {
-        // eslint-disable-next-line no-undef
-        cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/`);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    },
-});
-const upload = (0, multer_1.default)({ videoStorage });
-router.post('/upload/:id', upload.single('file'), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/upload/:id', multer_1.upload.single('file'), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { title } = req.body;
     const { id } = req.params;
     if (!title || !id) {

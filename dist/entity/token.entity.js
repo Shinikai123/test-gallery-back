@@ -24,7 +24,7 @@ __decorate([
 ], TokenEntity.prototype, "token", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(type => index_1.UserEntity, user => user.token),
-    (0, typeorm_1.JoinColumn)({ name: "userId" }),
+    (0, typeorm_1.JoinColumn)({ name: "user_id" }),
     __metadata("design:type", index_1.UserEntity)
 ], TokenEntity.prototype, "user", void 0);
 TokenEntity = __decorate([

@@ -29,12 +29,12 @@ __decorate([
 ], AccessEntity.prototype, "access", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(type => user_entity_1.UserEntity, user => user.accesses, { onDelete: "CASCADE" }),
-    (0, typeorm_1.JoinColumn)({ name: 'userId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'user_id' }),
     __metadata("design:type", user_entity_1.UserEntity)
 ], AccessEntity.prototype, "user", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(type => video_entity_1.VideoEntity, video => video.accesses, { onDelete: 'CASCADE' }),
-    (0, typeorm_1.JoinColumn)({ name: "videoId" }),
+    (0, typeorm_1.JoinColumn)({ name: "video_id" }),
     __metadata("design:type", video_entity_1.VideoEntity)
 ], AccessEntity.prototype, "video", void 0);
 AccessEntity = __decorate([

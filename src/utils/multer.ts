@@ -1,9 +1,8 @@
 import multer from 'multer';
 
-const storage = (id: string) => {
-  return multer.diskStorage({
+const storage =  multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${id}`);
+      cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.id}`);
     },
     filename: (req, file, cb) => {
       cb(null, `${Date.now()}-${file.originalname}`);
@@ -11,7 +10,6 @@ const storage = (id: string) => {
 
   });
 
-}
 
 
-export const upload = (id: string) => multer(storage(id));
+export const upload =  multer({storage});

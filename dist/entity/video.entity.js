@@ -32,10 +32,6 @@ __decorate([
     __metadata("design:type", String)
 ], VideoEntity.prototype, "url", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: "is_private" }),
-    __metadata("design:type", Boolean)
-], VideoEntity.prototype, "isPrivate", void 0);
-__decorate([
     (0, typeorm_1.ManyToOne)(type => index_1.UserEntity, user => user.video),
     (0, typeorm_1.JoinColumn)({ name: 'ownerId' }),
     __metadata("design:type", index_1.UserEntity)
