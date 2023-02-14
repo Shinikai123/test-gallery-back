@@ -7,8 +7,8 @@ export class VideoService {
         const newVideo = await dbManager.create(VideoEntity, {title, url, filename, owner: id});
         const savedVideo = await dbManager.save(VideoEntity, newVideo);
 
-        const grantAccess = await dbManager.create(AccessEntity, {user_id: id, video_id: savedVideo.id, access: "granted" });
-        await dbManager.save(AccessEntity, grantAccess);
+        const getAccess = await dbManager.create(AccessEntity, {user_id: id, video_id: savedVideo.id, access: "granted" });
+        await dbManager.save(AccessEntity, getAccess);
 
         return savedVideo
     }
@@ -21,8 +21,8 @@ export class VideoService {
         try{
             const access = await dbManager.findOne(AccessEntity, {where: {user_id : user_id, video_id : video_id}})
             if(!access) {
-                const grantAccess = await dbManager.create(AccessEntity, {user_id: user_id, video_id: video_id, access: "denied"});
-                await dbManager.save(AccessEntity, grantAccess);
+                const getAccess = await dbManager.create(AccessEntity, {user_id: user_id, video_id: video_id, access: "denied"});
+                await dbManager.save(AccessEntity, getAccess);
             }
             return dbManager.findOne(AccessEntity, {where: {user_id : user_id, video_id : video_id}});
         } catch(e) {

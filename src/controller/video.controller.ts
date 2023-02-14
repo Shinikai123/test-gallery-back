@@ -1,9 +1,14 @@
 import {NextFunction, Request, Response} from 'express';
+import { dbManager } from '..';
+import { VideoEntity } from '../entity';
 import { VideoService } from '../service/video.service';
 
 const videoService = new VideoService();
 
 export class VideoController {
+
+     
+
     async uploadVideo(req: Request, res: Response, next: NextFunction) {
         const {title} = req.body;
         const {id} = req.params;
@@ -23,6 +28,16 @@ export class VideoController {
         }
         
     }
+
+    async getVideos(req: Request, res: Response) {
+        const {id} = req.params;
+        const videoRepository = dbManager.getRepository(VideoEntity);
+        const movies = await videoRepository.find({
+          where: {owner: {id}},
+          order: {id: 'DESC'}
+        });
+        return res.json(movies);
+      }
 
     async deleteVideo(req: Request, res: Response, next: NextFunction) {
         const {id} = req.params;
