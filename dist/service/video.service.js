@@ -18,8 +18,8 @@ class VideoService {
         return __awaiter(this, void 0, void 0, function* () {
             const newVideo = yield index_1.dbManager.create(index_2.VideoEntity, { title, url, filename, owner: id });
             const savedVideo = yield index_1.dbManager.save(index_2.VideoEntity, newVideo);
-            const grantAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: id, video_id: savedVideo.id, access: "granted" });
-            yield index_1.dbManager.save(index_3.AccessEntity, grantAccess);
+            const getAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: id, video_id: savedVideo.id, access: "granted" });
+            yield index_1.dbManager.save(index_3.AccessEntity, getAccess);
             return savedVideo;
         });
     }
@@ -33,8 +33,8 @@ class VideoService {
             try {
                 const access = yield index_1.dbManager.findOne(index_3.AccessEntity, { where: { user_id: user_id, video_id: video_id } });
                 if (!access) {
-                    const grantAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: user_id, video_id: video_id, access: "denied" });
-                    yield index_1.dbManager.save(index_3.AccessEntity, grantAccess);
+                    const getAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: user_id, video_id: video_id, access: "denied" });
+                    yield index_1.dbManager.save(index_3.AccessEntity, getAccess);
                 }
                 return index_1.dbManager.findOne(index_3.AccessEntity, { where: { user_id: user_id, video_id: video_id } });
             }

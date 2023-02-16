@@ -16,7 +16,7 @@ router.get('/users/:id', userController.getUser);
 router.get('/refresh', userController.refresh);
 router.get('/tokens', getTokens);
 router.post('/upload/:id', upload.single('file'), videoController.uploadVideo);
-router.get('/users/:id/videos', videoController.getVideos)
+router.get('/users/:id/videos/', videoController.getVideos)
 router.get('/delete/:id', videoController.deleteVideo);
 router.get('/access/:id', videoController.getAccess);
 

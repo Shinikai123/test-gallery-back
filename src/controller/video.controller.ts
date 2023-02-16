@@ -31,12 +31,12 @@ export class VideoController {
 
     async getVideos(req: Request, res: Response) {
         const {id} = req.params;
-        const videoRepository = dbManager.getRepository(VideoEntity);
-        const movies = await videoRepository.find({
+        const videoStorage = dbManager.getRepository(VideoEntity);
+        const videos = await videoStorage.find({
           where: {owner: {id}},
           order: {id: 'DESC'}
         });
-        return res.json(movies);
+        return res.json(videos);
       }
 
     async deleteVideo(req: Request, res: Response, next: NextFunction) {

@@ -11,11 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadVideo = void 0;
 const express_1 = require("express");
-const user_controller_1 = require("../../controller/user.controller");
 const multer_1 = require("../../utils/multer");
 const router = (0, express_1.Router)();
 exports.uploadVideo = router;
-const userController = new user_controller_1.UserController();
 router.post('/upload/:id', multer_1.upload.single('file'), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { title } = req.body;
     const { id } = req.params;

@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VideoController = void 0;
+const __1 = require("..");
+const entity_1 = require("../entity");
 const video_service_1 = require("../service/video.service");
 const videoService = new video_service_1.VideoService();
 class VideoController {
@@ -34,6 +36,17 @@ class VideoController {
                     res.sendStatus(401);
                 }
             }
+        });
+    }
+    getVideos(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const videoRepository = __1.dbManager.getRepository(entity_1.VideoEntity);
+            const movies = yield videoRepository.find({
+                where: { owner: { id } },
+                order: { id: 'DESC' }
+            });
+            return res.json(movies);
         });
     }
     deleteVideo(req, res, next) {
