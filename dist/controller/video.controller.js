@@ -25,7 +25,7 @@ class VideoController {
             }
             else {
                 try {
-                    const filename = (_a = req === null || req === void 0 ? void 0 : req.file) === null || _a === void 0 ? void 0 : _a.filename;
+                    const filename = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
                     const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${id}/`;
                     const uploadedVideo = yield videoService.uploadVideo(id, title, url, filename);
                     res.json(uploadedVideo);
@@ -41,12 +41,12 @@ class VideoController {
     getVideos(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const videoRepository = __1.dbManager.getRepository(entity_1.VideoEntity);
-            const movies = yield videoRepository.find({
+            const videoStorage = __1.dbManager.getRepository(entity_1.VideoEntity);
+            const videos = yield videoStorage.find({
                 where: { owner: { id } },
                 order: { id: 'DESC' }
             });
-            return res.json(movies);
+            return res.json(videos);
         });
     }
     deleteVideo(req, res, next) {
@@ -73,8 +73,25 @@ class VideoController {
             }
             catch (e) {
                 next(e);
-                res.sendStatus(401);
+                res.status(401);
             }
+        });
+    }
+    updateVideo(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { title } = req.body;
+            yield videoService.updateVideo(id, title);
+            return res.sendStatus(200);
+        });
+    }
+    setAccess(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { video_id, access } = req.body;
+            console.log(id);
+            yield videoService.updateAccess(id, video_id, access);
+            return res.sendStatus(200);
         });
     }
 }

@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {UserController}from "../controller/user.controller";
 import { VideoController } from "../controller/video.controller";
-import { getTokens } from "./token/route.token.get-tokens";
+import { authMiddleware } from "../middleware/auth.middleware";
 import {upload} from "../utils/multer";
 
 const router = Router();
@@ -14,11 +14,14 @@ router.get('/logout', userController.logoutUser);
 router.get('/users', userController.getAllUsers);
 router.get('/users/:id', userController.getUser);
 router.get('/refresh', userController.refresh);
-router.get('/tokens', getTokens);
-router.post('/upload/:id', upload.single('file'), videoController.uploadVideo);
-router.get('/users/:id/videos/', videoController.getVideos)
-router.get('/delete/:id', videoController.deleteVideo);
-router.get('/access/:id', videoController.getAccess);
 
+
+router.post('/upload/:id', upload.single('file'), videoController.uploadVideo);
+router.get('/users/:id/videos/', videoController.getVideos);
+router.post('/video/:id', videoController.updateVideo);
+router.get('/delete/:id', videoController.deleteVideo);
+router.get('/users/:user_id/videos/:video_id/', videoController.stream)
+router.get('/access/:id', videoController.getAccess);
+router.post('/access/:id', videoController.setAccess)
     
 export default router;

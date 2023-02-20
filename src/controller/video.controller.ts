@@ -6,9 +6,6 @@ import { VideoService } from '../service/video.service';
 const videoService = new VideoService();
 
 export class VideoController {
-
-     
-
     async uploadVideo(req: Request, res: Response, next: NextFunction) {
         const {title} = req.body;
         const {id} = req.params;
@@ -16,8 +13,8 @@ export class VideoController {
             res.sendStatus(401).json({error: `${title} - ${id}`})
         } else {
             try{
-                const filename = req?.file?.filename;
-                const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${id}/`;
+                const filename = req.file?.filename;
+                const url = `${process.cwd()}/${process.env.STORAGE_PATH}/`;
                 const uploadedVideo = await videoService.uploadVideo(id, title, url, filename)
                 res.json(uploadedVideo);
             } catch (e) {
@@ -50,6 +47,14 @@ export class VideoController {
         }
     }
 
+    
+  async stream(req: Request, res: Response) {
+    const {video_id, user_id} = req.params;
+    const readStream = await videoService.createStream(video_id, user_id);
+
+    readStream.pipe(res);
+  }
+
     async getAccess(req: Request, res: Response, next: NextFunction) {
         const {id} = req.params;
         const {video_id} = req.query;
@@ -59,9 +64,26 @@ export class VideoController {
             res.json(access);
         } catch(e){
             next(e)
-            res.sendStatus(401)
+            res.status(401)
         }
-    } 
+    }
+    
+    async updateVideo(req: Request, res: Response) {
+        const {id} = req.params;
+        const { title} = req.body;
+        await videoService.updateVideo(id, title);
+
+        return res.sendStatus(200);
+    }
+
+    async setAccess(req: Request, res: Response) {
+        const {id} = req.params;
+        const {video_id, access} = req.body;
+        console.log(id);
+        await videoService.updateAccess(id, video_id, access);
+
+        return res.sendStatus(200);
+    }
 }
 
 export default new VideoController();

@@ -43,6 +43,41 @@ class VideoService {
             }
         });
     }
+    userVideo(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const videoStorage = index_1.dbManager.getRepository(index_2.VideoEntity);
+            return yield videoStorage.find({
+                where: { owner: { id } },
+                order: { id: "DESC" },
+            });
+        });
+    }
+    updateVideo(id, title) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield index_1.dbManager.update(index_2.VideoEntity, { id }, { title });
+        });
+    }
+    updateAccess(user_id, video_id, access) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (access) {
+                const currentAccess = yield index_1.dbManager.findOne(index_3.AccessEntity, {
+                    where: {
+                        user_id: user_id,
+                        video_id: video_id
+                    },
+                });
+                if (!currentAccess) {
+                    const newAccess = yield index_1.dbManager.create(index_3.AccessEntity, {
+                        user_id: user_id,
+                        video_id: video_id,
+                        access: "granted",
+                    });
+                    return yield index_1.dbManager.save(index_3.AccessEntity, newAccess);
+                }
+                return yield index_1.dbManager.update(index_3.AccessEntity, currentAccess, { access });
+            }
+        });
+    }
 }
 exports.VideoService = VideoService;
 exports.default = new VideoService();
