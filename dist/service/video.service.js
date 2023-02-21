@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -13,12 +36,13 @@ exports.VideoService = void 0;
 const index_1 = require("../index");
 const index_2 = require("../entity/index");
 const index_3 = require("../entity/index");
+const fs = __importStar(require("fs"));
 class VideoService {
     uploadVideo(id, title, url, filename) {
         return __awaiter(this, void 0, void 0, function* () {
             const newVideo = yield index_1.dbManager.create(index_2.VideoEntity, { title, url, filename, owner: id });
             const savedVideo = yield index_1.dbManager.save(index_2.VideoEntity, newVideo);
-            const getAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: id, video_id: savedVideo.id, access: "granted" });
+            const getAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: id, video_id: savedVideo.id, access: "full" });
             yield index_1.dbManager.save(index_3.AccessEntity, getAccess);
             return savedVideo;
         });
@@ -43,6 +67,12 @@ class VideoService {
             }
         });
     }
+    createStream(video_id, user_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const video = yield index_1.dbManager.findOne(index_2.VideoEntity, { where: { id: video_id } });
+            return fs.createReadStream(`${process.cwd()}/${process.env.STORAGE_PATH}/${video.filename}`);
+        });
+    }
     userVideo(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const videoStorage = index_1.dbManager.getRepository(index_2.VideoEntity);
@@ -61,16 +91,16 @@ class VideoService {
         return __awaiter(this, void 0, void 0, function* () {
             if (access) {
                 const currentAccess = yield index_1.dbManager.findOne(index_3.AccessEntity, {
-                    where: {
-                        user_id: user_id,
-                        video_id: video_id
-                    },
+                    where: { user_id: user_id, video_id: video_id },
                 });
+                if (access === currentAccess) {
+                    return yield index_1.dbManager.delete(index_3.AccessEntity, currentAccess);
+                }
                 if (!currentAccess) {
                     const newAccess = yield index_1.dbManager.create(index_3.AccessEntity, {
                         user_id: user_id,
                         video_id: video_id,
-                        access: "granted",
+                        access: "full",
                     });
                     return yield index_1.dbManager.save(index_3.AccessEntity, newAccess);
                 }

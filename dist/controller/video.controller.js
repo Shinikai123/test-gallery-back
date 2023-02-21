@@ -26,7 +26,7 @@ class VideoController {
             else {
                 try {
                     const filename = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
-                    const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${id}/`;
+                    const url = `${process.cwd()}/${process.env.STORAGE_PATH}/`;
                     const uploadedVideo = yield videoService.uploadVideo(id, title, url, filename);
                     res.json(uploadedVideo);
                 }
@@ -60,6 +60,13 @@ class VideoController {
                 next(e);
                 res.sendStatus(401);
             }
+        });
+    }
+    stream(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { video_id, user_id } = req.params;
+            const readStream = yield videoService.createStream(video_id, user_id);
+            readStream.pipe(res);
         });
     }
     getAccess(req, res, next) {

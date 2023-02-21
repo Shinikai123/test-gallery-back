@@ -1,7 +1,7 @@
 import { dbManager } from "../index";
 import {VideoEntity} from "../entity/index";
 import { AccessEntity } from "../entity/index";
-
+import { AccessEnum } from "../utils/access";
 import * as fs from "fs"
 
 export class VideoService {
@@ -9,7 +9,7 @@ export class VideoService {
         const newVideo = await dbManager.create(VideoEntity, {title, url, filename, owner: id});
         const savedVideo = await dbManager.save(VideoEntity, newVideo);
 
-        const getAccess = await dbManager.create(AccessEntity, {user_id: id, video_id: savedVideo.id, access: "granted" });
+        const getAccess = await dbManager.create(AccessEntity, {user_id: id, video_id: savedVideo.id, access: AccessEnum.full });
         await dbManager.save(AccessEntity, getAccess);
 
         return savedVideo
@@ -57,14 +57,14 @@ export class VideoService {
             const currentAccess = await dbManager.findOne( AccessEntity, {
                 where: {user_id : user_id, video_id: video_id},
             });
-            if(access === currentAccess) {
+            if(access === AccessEnum.denied && currentAccess) {
                 return await dbManager.delete(AccessEntity, currentAccess)
             }
             if(!currentAccess) {
                 const newAccess = await dbManager.create(AccessEntity, {
                     user_id: user_id,
                     video_id: video_id,
-                    access: "granted",
+                    access: AccessEnum[access],
                 });
                 return await dbManager.save(AccessEntity, newAccess); 
             }
