@@ -75,7 +75,43 @@ class UserService {
                 return user.user_name;
             }
             catch (e) {
-                return { error: e.message };
+                console.log(e);
+            }
+        });
+    }
+    getAvatarById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield index_2.dbManager.findOne(index_1.UserEntity, { where: { id } });
+                return user.avatar;
+            }
+            catch (e) {
+                console.log(e);
+            }
+        });
+    }
+    uploadAvatar(avatar) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newAvatar = yield index_2.dbManager.create(index_1.UserEntity, { avatar });
+            const savedAvatar = yield index_2.dbManager.save(index_1.UserEntity, newAvatar);
+            return savedAvatar;
+        });
+    }
+    deleteAvatar(avatar) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return index_2.dbManager.delete(index_1.UserEntity, { avatar });
+        });
+    }
+    updateAvatar(id, avatar) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield index_2.dbManager.delete(index_1.UserEntity, { avatar });
+            }
+            catch (e) {
+                console.log(e);
+            }
+            finally {
+                yield index_2.dbManager.update(index_1.UserEntity, { avatar });
             }
         });
     }

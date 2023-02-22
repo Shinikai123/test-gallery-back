@@ -27,10 +27,10 @@ export class UserService{
         return {...tokens, ...user}
     }
 
-    async registerUser(user_name, user_email, password) {
+    async registerUser(user_name, user_email, password, avatar) {
         const hashedPassword = await hashPassword(password);
 
-        const user = dbManager.create(UserEntity, {user_name, user_email, password : hashedPassword});
+        const user = dbManager.create(UserEntity, {user_name, user_email, password : hashedPassword, avatar});
         await dbManager.save(user); 
 
         const {accessToken, refreshToken, expires_in} = tokenService.generateTokens(user);
@@ -71,9 +71,41 @@ export class UserService{
         try {
             const user = await dbManager.findOne(UserEntity, {where : {id}});
             return user.user_name;
-        } catch (e : any){
-            return {error: e.message}
+        } catch (e){
+            console.log(e)
         }
     }
+
+    async getAvatarById(id) {
+        try{
+            const user = await dbManager.findOne(UserEntity, {where: {id}});
+            return user.avatar;
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async uploadAvatar(avatar){
+        const newAvatar = await dbManager.create(UserEntity, {avatar});
+        const savedAvatar = await dbManager.save(UserEntity, newAvatar);
+
+        return savedAvatar
+    }
+
+    async deleteAvatar(avatar) {
+        return dbManager.delete(UserEntity, {avatar})
+    }
+    
+    async updateAvatar(id, avatar) {
+        try{
+            return await dbManager.delete(UserEntity, { avatar});
+        } catch(e) {
+            console.log(e)
+        } finally {
+             await dbManager.update(UserEntity, { avatar});
+        }
+    }
+    
+
 }
     

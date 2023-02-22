@@ -11,13 +11,13 @@ const userService = new UserService();
 export class UserController {
  async registerUser(req : Request, res: Response, next: NextFunction) {
     try{
-        const {user_name, user_email, password} = req.body;
+        const {user_name, user_email, password, avatar} = req.body;
         const compareUser = await dbManager.findOne(UserEntity, {where: {user_email}});
 
         if(compareUser) {
             return res.status(409).send({error: 'User with this email already exists'});
         }
-        const userData = await userService.registerUser(user_name, user_email, password)
+        const userData = await userService.registerUser(user_name, user_email, password, avatar)
 
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 24 * 60 * 60 *1000, httpOnly: true})
         return res.status(201).send({
@@ -83,4 +83,61 @@ export class UserController {
         next(e)
     }
  }
+
+
+ async uploadAvatar(req: Request, res: Response, next: NextFunction) {
+    const {avatar} = req.body;
+    const {user_id} = req.params;
+    if(!avatar || !user_id) {
+        res.sendStatus(401).json({error: `${avatar} - ${user_id}`})
+    } else {
+        try{
+            const filename = req.file?.filename;
+            const avatar = `${process.cwd()}/${process.env.AVATAR_PATH}/`;
+            const uploadedVideo = await userService.uploadAvatar({user_id, avatar, filename})
+            res.json(uploadedVideo);
+        } catch (e) {
+            next(e);
+            console.log (e);
+            res.sendStatus(401)
+        }
+    }
+    
+}
+
+async deleteAvatar(req: Request, res: Response, next: NextFunction) {
+    const {avatar} = req.params;
+    try{
+        const deletedAvatar = await userService.deleteAvatar(avatar);
+        res.json(deletedAvatar);
+    } catch(e) {
+        next(e)
+        res.sendStatus(401)
+    }
+}
+
+
+async getAvatar(req : Request, res : Response, next : NextFunction) {
+    const {id} = req.params;
+    try{
+        const userAvatar = await userService.getAvatarById(id)
+        if(userAvatar.err) {
+            return res.json({err: "User not found"})
+        }
+        return res.json({id, avatar: userAvatar})
+    } catch (e) {
+        next(e)
+    }
+ }
+
+
+
+async updateAvatar(req: Request, res: Response) {
+    const {user_id} = req.params;
+    const { avatar} = req.body;
+    await userService.updateAvatar(user_id, avatar);
+
+    return res.sendStatus(200);
+}
+
 }

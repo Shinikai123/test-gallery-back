@@ -100,5 +100,64 @@ class UserController {
             }
         });
     }
+    uploadAvatar(req, res, next) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const { avatar } = req.body;
+            const { user_id } = req.params;
+            if (!avatar || !user_id) {
+                res.sendStatus(401).json({ error: `${avatar} - ${user_id}` });
+            }
+            else {
+                try {
+                    const filename = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
+                    const avatar = `${process.cwd()}/${process.env.AVATAR_PATH}/`;
+                    const uploadedVideo = yield userService.uploadAvatar({ user_id, avatar, filename });
+                    res.json(uploadedVideo);
+                }
+                catch (e) {
+                    next(e);
+                    console.log(e);
+                    res.sendStatus(401);
+                }
+            }
+        });
+    }
+    deleteAvatar(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { avatar } = req.params;
+            try {
+                const deletedAvatar = yield userService.deleteAvatar(avatar);
+                res.json(deletedAvatar);
+            }
+            catch (e) {
+                next(e);
+                res.sendStatus(401);
+            }
+        });
+    }
+    getAvatar(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            try {
+                const userAvatar = yield userService.getAvatarById(id);
+                if (userAvatar.err) {
+                    return res.json({ err: "User not found" });
+                }
+                return res.json({ id, avatar: userAvatar });
+            }
+            catch (e) {
+                next(e);
+            }
+        });
+    }
+    updateAvatar(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { user_id } = req.params;
+            const { avatar } = req.body;
+            yield userService.updateAvatar(user_id, avatar);
+            return res.sendStatus(200);
+        });
+    }
 }
 exports.UserController = UserController;

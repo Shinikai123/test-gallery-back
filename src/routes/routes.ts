@@ -1,8 +1,9 @@
 import {Router} from "express";
 import {UserController}from "../controller/user.controller";
 import { VideoController } from "../controller/video.controller";
-import { authMiddleware } from "../middleware/auth.middleware";
-import {upload} from "../utils/multer";
+// import { authMiddleware } from "../middleware/auth.middleware";
+import { multerUploadAvatar } from "../utils/multerAvatar";
+import { multerUploadVideo } from "../utils/multerVideo";
 
 const router = Router();
 const userController = new UserController()
@@ -14,12 +15,16 @@ router.get('/logout', userController.logoutUser);
 router.get('/users', userController.getAllUsers);
 router.get('/users/:id', userController.getUser);
 router.get('/refresh', userController.refresh);
+router.get('/users/:id/avatar', userController.getAvatar);
+router.post('/avatar/:id', userController.updateAvatar);
+router.delete('/delete/:avatar', userController.deleteAvatar);
+router.post('/upload/:user_id', multerUploadAvatar.single('file'), userController.uploadAvatar);
 
 
-router.post('/upload/:id', upload.single('file'), videoController.uploadVideo);
+router.post('/upload/:id', multerUploadVideo.single('file'), videoController.uploadVideo);
 router.get('/users/:id/videos/', videoController.getVideos);
 router.post('/video/:id', videoController.updateVideo);
-router.get('/delete/:id', videoController.deleteVideo);
+router.delete('/delete/:id', videoController.deleteVideo);
 router.get('/users/:user_id/videos/:video_id/', videoController.stream)
 router.get('/access/:id', videoController.getAccess);
 router.post('/access/:id', videoController.setAccess)

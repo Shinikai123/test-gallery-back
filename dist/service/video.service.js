@@ -36,13 +36,14 @@ exports.VideoService = void 0;
 const index_1 = require("../index");
 const index_2 = require("../entity/index");
 const index_3 = require("../entity/index");
+const access_1 = require("../utils/access");
 const fs = __importStar(require("fs"));
 class VideoService {
     uploadVideo(id, title, url, filename) {
         return __awaiter(this, void 0, void 0, function* () {
             const newVideo = yield index_1.dbManager.create(index_2.VideoEntity, { title, url, filename, owner: id });
             const savedVideo = yield index_1.dbManager.save(index_2.VideoEntity, newVideo);
-            const getAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: id, video_id: savedVideo.id, access: "full" });
+            const getAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: id, video_id: savedVideo.id, access: access_1.AccessEnum.full });
             yield index_1.dbManager.save(index_3.AccessEntity, getAccess);
             return savedVideo;
         });
@@ -93,14 +94,14 @@ class VideoService {
                 const currentAccess = yield index_1.dbManager.findOne(index_3.AccessEntity, {
                     where: { user_id: user_id, video_id: video_id },
                 });
-                if (access === currentAccess) {
+                if (access === access_1.AccessEnum.denied && currentAccess) {
                     return yield index_1.dbManager.delete(index_3.AccessEntity, currentAccess);
                 }
                 if (!currentAccess) {
                     const newAccess = yield index_1.dbManager.create(index_3.AccessEntity, {
                         user_id: user_id,
                         video_id: video_id,
-                        access: "full",
+                        access: access_1.AccessEnum[access],
                     });
                     return yield index_1.dbManager.save(index_3.AccessEntity, newAccess);
                 }

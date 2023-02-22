@@ -33,6 +33,10 @@ __decorate([
     __metadata("design:type", String)
 ], UserEntity.prototype, "password", void 0);
 __decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], UserEntity.prototype, "avatar", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)(type => index_1.VideoEntity, video => video.owner, { onDelete: "CASCADE" }),
     __metadata("design:type", Array)
 ], UserEntity.prototype, "video", void 0);
