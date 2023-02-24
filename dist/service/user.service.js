@@ -36,7 +36,7 @@ class UserService {
     registerUser(user_name, user_email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const hashedPassword = yield (0, bcrypt_1.hashPassword)(password);
-            const user = index_2.dbManager.create(index_1.UserEntity, { user_name, user_email, password: hashedPassword });
+            const user = index_2.dbManager.create(index_1.UserEntity, { user_name, user_email, password: hashedPassword, avatar: "" });
             yield index_2.dbManager.save(user);
             const { accessToken, refreshToken, expires_in } = tokenService.generateTokens(user);
             yield tokenService.saveToken(user, refreshToken);
@@ -79,40 +79,12 @@ class UserService {
             }
         });
     }
-    getAvatarById(id) {
+    uploadAvatar(userId, url) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const user = yield index_2.dbManager.findOne(index_1.UserEntity, { where: { id } });
-                return user.avatar;
-            }
-            catch (e) {
-                console.log(e);
-            }
-        });
-    }
-    uploadAvatar(avatar) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const newAvatar = yield index_2.dbManager.create(index_1.UserEntity, { avatar });
-            const savedAvatar = yield index_2.dbManager.save(index_1.UserEntity, newAvatar);
+            const user = yield index_2.dbManager.find(index_1.UserEntity, { where: { id: userId } });
+            user.avatar = `${process.env.DOMAIN}/users/avatar/${userId}`;
+            const savedAvatar = yield index_2.dbManager.save(index_1.UserEntity, user);
             return savedAvatar;
-        });
-    }
-    deleteAvatar(avatar) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return index_2.dbManager.delete(index_1.UserEntity, { avatar });
-        });
-    }
-    updateAvatar(id, avatar) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield index_2.dbManager.delete(index_1.UserEntity, { avatar });
-            }
-            catch (e) {
-                console.log(e);
-            }
-            finally {
-                yield index_2.dbManager.update(index_1.UserEntity, { avatar });
-            }
         });
     }
 }

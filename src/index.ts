@@ -10,6 +10,7 @@ import router from './routes/routes';
 import { cookie } from 'express-validator';
 import * as dotenv from 'dotenv';
 import { validation } from './config';
+import { logger } from './logs/logger';
 const cors = require('cors');
 
 // import { registerUser } from './src/routes/users/registerUser';
@@ -28,7 +29,7 @@ const getDBConnection = async () => {
     console.log(validation(process.env))
 
     try{
-        
+        logger.info(`connected to database ${ORMConfig.database}`);
         app.use(express.urlencoded({ extended: false}));
         app.use(json());
         app.use(cookieParser())
@@ -49,7 +50,7 @@ const getDBConnection = async () => {
     app.listen(PORT)
     console.log(`Server is running at http://localhost:${PORT}`)
     } catch (err : any) {
-        (err.message)
+        logger.error(err.message)
     }
 
 }

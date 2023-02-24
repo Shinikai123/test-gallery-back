@@ -15,10 +15,9 @@ router.get('/logout', userController.logoutUser);
 router.get('/users', userController.getAllUsers);
 router.get('/users/:id', userController.getUser);
 router.get('/refresh', userController.refresh);
-router.get('/users/:id/avatar', userController.getAvatar);
-router.post('/avatar/:id', userController.updateAvatar);
-router.delete('/delete/:avatar', userController.deleteAvatar);
-router.post('/upload/:user_id', multerUploadAvatar.single('file'), userController.uploadAvatar);
+router.post('/users/avatar/:userId', multerUploadAvatar.single('file'), userController.uploadAvatar);
+router.get('/users/avatar/:userId', userController.getAvatar);
+
 
 
 router.post('/upload/:id', multerUploadVideo.single('file'), videoController.uploadVideo);

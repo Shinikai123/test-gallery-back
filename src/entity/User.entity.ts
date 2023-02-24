@@ -19,7 +19,7 @@ export class UserEntity {
     password: string;
 
     @Column()
-    avatar: string;
+    avatar: string ;
 
     @OneToMany(type => VideoEntity, video => video.owner, {onDelete: "CASCADE"})
     video: VideoEntity[];

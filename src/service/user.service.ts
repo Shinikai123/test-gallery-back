@@ -27,10 +27,10 @@ export class UserService{
         return {...tokens, ...user}
     }
 
-    async registerUser(user_name, user_email, password, avatar) {
+    async registerUser(user_name, user_email, password, ) {
         const hashedPassword = await hashPassword(password);
 
-        const user = dbManager.create(UserEntity, {user_name, user_email, password : hashedPassword, avatar});
+        const user = dbManager.create(UserEntity, {user_name, user_email, password : hashedPassword, avatar: ""});
         await dbManager.save(user); 
 
         const {accessToken, refreshToken, expires_in} = tokenService.generateTokens(user);
@@ -76,35 +76,38 @@ export class UserService{
         }
     }
 
-    async getAvatarById(id) {
-        try{
-            const user = await dbManager.findOne(UserEntity, {where: {id}});
-            return user.avatar;
-        } catch (e) {
-            console.log(e)
-        }
+
+    async uploadAvatar(userId, url){
+        const user = await dbManager.find(UserEntity, {where: {id: userId}});
+        user.avatar = `${process.env.DOMAIN}/users/avatar/${userId}`;
+        const savedAvatar = await dbManager.save(UserEntity, user);
+
+        return savedAvatar;
     }
 
-    async uploadAvatar(avatar){
-        const newAvatar = await dbManager.create(UserEntity, {avatar});
-        const savedAvatar = await dbManager.save(UserEntity, newAvatar);
+    // async getAvatarById(id) {
+    //     try{
+    //         const user = await dbManager.findOne(UserEntity, {where: {id}});
+    //         return user.avatar;
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // }
 
-        return savedAvatar
-    }
 
-    async deleteAvatar(avatar) {
-        return dbManager.delete(UserEntity, {avatar})
-    }
+    // async deleteAvatar(avatar) {
+    //     return dbManager.delete(UserEntity, {avatar})
+    // }
     
-    async updateAvatar(id, avatar) {
-        try{
-            return await dbManager.delete(UserEntity, { avatar});
-        } catch(e) {
-            console.log(e)
-        } finally {
-             await dbManager.update(UserEntity, { avatar});
-        }
-    }
+    // async updateAvatar(id, avatar) {
+    //     try{
+    //         return await dbManager.delete(UserEntity, { avatar});
+    //     } catch(e) {
+    //         console.log(e)
+    //     } finally {
+    //          await dbManager.update(UserEntity, { avatar});
+    //     }
+    // }
     
 
 }

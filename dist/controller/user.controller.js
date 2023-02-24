@@ -8,22 +8,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const __1 = require("..");
 const index_1 = require("../entity/index");
-const token_service_1 = require("../service/token.service");
+// import {TokenService} from "../service/token.service";
 const user_service_1 = require("../service/user.service");
-const tokenService = new token_service_1.TokenService();
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
+// import { userRepository } from "../repositories";
+// const tokenService = new TokenService();
 const userService = new user_service_1.UserService();
 class UserController {
     registerUser(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { user_name, user_email, password } = req.body;
+                const { user_name, user_email, password, } = req.body;
                 const compareUser = yield __1.dbManager.findOne(index_1.UserEntity, { where: { user_email } });
                 if (compareUser) {
-                    return res.status(409).send({ error: 'User with this email already exists' });
+                    return res.send({ error: 'User with this email already exists' });
                 }
                 const userData = yield userService.registerUser(user_name, user_email, password);
                 res.cookie('refreshToken', userData.refreshToken, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
@@ -103,60 +109,34 @@ class UserController {
     uploadAvatar(req, res, next) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const { avatar } = req.body;
-            const { user_id } = req.params;
-            if (!avatar || !user_id) {
-                res.sendStatus(401).json({ error: `${avatar} - ${user_id}` });
+            const { userId } = req.params;
+            if (!userId) {
+                res.sendStatus(401).json({ error: ` ${userId}` });
             }
             else {
                 try {
                     const filename = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
-                    const avatar = `${process.cwd()}/${process.env.AVATAR_PATH}/`;
-                    const uploadedVideo = yield userService.uploadAvatar({ user_id, avatar, filename });
-                    res.json(uploadedVideo);
+                    const url = `${process.cwd()}/${process.env.AVATAR_PATH}/${userId}/${filename}`;
+                    const savedAvatar = yield userService.uploadAvatar(userId, url);
+                    res.json(savedAvatar);
                 }
                 catch (e) {
                     next(e);
-                    console.log(e);
                     res.sendStatus(401);
                 }
             }
         });
     }
-    deleteAvatar(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { avatar } = req.params;
-            try {
-                const deletedAvatar = yield userService.deleteAvatar(avatar);
-                res.json(deletedAvatar);
-            }
-            catch (e) {
-                next(e);
-                res.sendStatus(401);
-            }
-        });
-    }
     getAvatar(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
+            const avatarPath = path_1.default.join(__dirname, `../avatarStorage/`);
             try {
-                const userAvatar = yield userService.getAvatarById(id);
-                if (userAvatar.err) {
-                    return res.json({ err: "User not found" });
-                }
-                return res.json({ id, avatar: userAvatar });
+                const readStream = yield fs_1.default.createReadStream(avatarPath);
+                readStream.pipe(res);
             }
             catch (e) {
-                next(e);
+                console.log(e);
             }
-        });
-    }
-    updateAvatar(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { user_id } = req.params;
-            const { avatar } = req.body;
-            yield userService.updateAvatar(user_id, avatar);
-            return res.sendStatus(200);
         });
     }
 }

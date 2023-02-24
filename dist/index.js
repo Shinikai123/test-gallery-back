@@ -45,6 +45,7 @@ const typeorm_2 = require("./config/typeorm");
 const routes_1 = __importDefault(require("./routes/routes"));
 const dotenv = __importStar(require("dotenv"));
 const config_1 = require("./config");
+const logger_1 = require("./logs/logger");
 const cors = require('cors');
 // import { registerUser } from './src/routes/users/registerUser';
 // import { loginUser } from './src/routes/users/loginUser';
@@ -59,6 +60,7 @@ const getDBConnection = () => __awaiter(void 0, void 0, void 0, function* () {
     const PORT = process.env.PORT || 8000;
     console.log((0, config_1.validation)(process.env));
     try {
+        logger_1.logger.info(`connected to database ${typeorm_2.ORMConfig.database}`);
         app.use(express_1.default.urlencoded({ extended: false }));
         app.use((0, body_parser_1.json)());
         app.use((0, cookie_parser_1.default)());
@@ -78,7 +80,7 @@ const getDBConnection = () => __awaiter(void 0, void 0, void 0, function* () {
         console.log(`Server is running at http://localhost:${PORT}`);
     }
     catch (err) {
-        (err.message);
+        logger_1.logger.error(err.message);
     }
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
