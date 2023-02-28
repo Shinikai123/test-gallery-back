@@ -8,7 +8,7 @@ const multer_1 = __importDefault(require("multer"));
 const storage = multer_1.default.diskStorage({
     destination: './src/avatarStorage',
     filename: (req, file, cb) => {
-        cb(null, `${file.originalname}/.{jpeg, png, gif, svg}`);
+        cb(null, `${file.originalname}/.{jpeg, jpg, png}`);
     },
 });
 exports.multerUploadAvatar = (0, multer_1.default)({ storage });

@@ -129,10 +129,17 @@ class UserController {
     }
     getAvatar(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const avatarPath = path_1.default.join(__dirname, `../avatarStorage/`);
+            const avatarPath = path_1.default.join(__dirname, "../avatarStorage");
+            const defaultAvatar = path_1.default.join(__dirname, "../avatarStorage/defaultAvatar.png");
             try {
-                const readStream = yield fs_1.default.createReadStream(avatarPath);
-                readStream.pipe(res);
+                if (!fs_1.default.existsSync(avatarPath)) {
+                    const readStream = yield fs_1.default.createReadStream(avatarPath);
+                    readStream.pipe(res);
+                }
+                else {
+                    const readStream = yield fs_1.default.createReadStream(defaultAvatar);
+                    readStream.pipe(res);
+                }
             }
             catch (e) {
                 console.log(e);

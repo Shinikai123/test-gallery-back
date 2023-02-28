@@ -104,14 +104,14 @@ async uploadAvatar(req: Request, res:Response, next: NextFunction) {
 }
 
 async getAvatar(req: Request, res: Response, next: NextFunction) {
-    const avatarPath = path.join(__dirname, `../avatarStorage`)
-    const defaultAvatar = path.join(__dirname, "../avatarStorage/defaultAvatar")
+    const avatarPath = path.join(__dirname, "../avatarStorage")
+    const defaultAvatar = path.join(__dirname, "../avatarStorage/defaultAvatar.png")
     try{
         if(!fs.existsSync(avatarPath)){
             const readStream = await fs.createReadStream(avatarPath);
             readStream.pipe(res)
         } else {
-            const readStream = await fs.createReadStream(avatarPath);
+            const readStream = await fs.createReadStream(defaultAvatar);
             readStream.pipe(res)
         }
         
