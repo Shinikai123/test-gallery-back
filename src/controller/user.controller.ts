@@ -77,8 +77,8 @@ export class UserController {
     const {id} = req.params;
     try{
         const userData = await userService.getUserById(id)
-        if(userData.err) {
-            return res.json({err: "User not found"})
+        if(userData.error) {
+            return res.json({error: "User not found"})
         }
         return res.json({id, user_email: userData})
     } catch (e) {
@@ -88,6 +88,7 @@ export class UserController {
 
 async uploadAvatar(req: Request, res:Response, next: NextFunction) {
     const {userId} = req.params;
+   
     if(!userId){
         res.sendStatus(401).json({error: ` ${userId}`});
     } else {
@@ -95,6 +96,8 @@ async uploadAvatar(req: Request, res:Response, next: NextFunction) {
             const filename = req.file?.filename;
             const url = `${process.cwd()}/${process.env.AVATAR_PATH}/${userId}/${filename}`;
             const savedAvatar = await userService.uploadAvatar(userId, url);
+            console.log(savedAvatar);
+            
             res.json(savedAvatar);
         } catch(e) {
             next(e);
@@ -104,13 +107,14 @@ async uploadAvatar(req: Request, res:Response, next: NextFunction) {
 }
 
 async getAvatar(req: Request, res: Response, next: NextFunction) {
-    const avatarPath = path.join(__dirname, "../avatarStorage")
+    const avatarPath = path.join(__dirname, "../avatarStorage/")
     const defaultAvatar = path.join(__dirname, "../avatarStorage/defaultAvatar.png")
     try{
-        if(!fs.existsSync(avatarPath)){
+        if(fs.existsSync(avatarPath)){
             const readStream = await fs.createReadStream(avatarPath);
             readStream.pipe(res)
-        } else {
+        } 
+        else {
             const readStream = await fs.createReadStream(defaultAvatar);
             readStream.pipe(res)
         }

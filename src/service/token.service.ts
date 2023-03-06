@@ -8,10 +8,11 @@ export class TokenService {
         const payload = {
             id: user.id,
             user_name : user.user_name,
-            user_email : user.user_email
+            user_email : user.user_email,
+            avatar: `${process.env.DOMAIN}/users/avatar/`,
         };
-        const accessToken = jwt.sign(payload, "1234-abcd-5678-efgh", {expiresIn: '30m'});
-        const refreshToken = jwt.sign(payload, "1234-abcd-5678-efgh", {expiresIn: '21d'})
+        const accessToken = jwt.sign(payload, process.env.JWT_SECRET || "", {expiresIn: '30m'});
+        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET || "", {expiresIn: '21d'})
         return {
             accessToken,
             expires_in: '1800000',
@@ -20,7 +21,7 @@ export class TokenService {
     }
 
     async saveToken(user, token) {
-        const {id} = user
+        const {id} = user;
         const TokenData = await dbManager.findOne(TokenEntity, {where : {user : {id}}})
 
         if(TokenData){

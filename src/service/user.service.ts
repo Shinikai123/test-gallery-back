@@ -55,6 +55,7 @@ export class UserService{
             id: user.id,
             user_name: user.user_name,
             user_email: user.user_email,
+            avatar: user.avatar,
             ...tokens
         };
     }
