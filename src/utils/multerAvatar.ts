@@ -1,8 +1,20 @@
 import multer from "multer";
+import fsExtra from "fs-extra";
+import fs from "fs";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, `${process.cwd()}/${process.env.AVATAR_PATH}`)
+     
+      if(!fs.existsSync
+        (`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}/${process.env.AVATAR_PATH}`)) 
+      {
+        fs.mkdirSync
+        (`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}/${process.env.AVATAR_PATH}`); 
+      } else {
+        fsExtra.emptyDirSync(
+          `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}/${process.env.AVATAR_PATH}`); 
+      }
+      cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}/${process.env.AVATAR_PATH}`); 
     },
     filename: (req, file, cb) => {
       cb(null, `${file.originalname}`);

@@ -3,6 +3,7 @@ import { dbManager } from "../index";
 import { TokenService } from "./token.service";
 import { comparePassword, hashPassword } from "../utils/bcrypt";
 import { TokenEntity } from "../entity/index";
+import fs from "fs";
 
 const tokenService = new TokenService()
 
@@ -27,15 +28,24 @@ export class UserService{
         return {...tokens, ...user}
     }
 
-    async registerUser(user_name, user_email, password, ) {
+    async registerUser(userName, userEmail, password, ) {
         const hashedPassword = await hashPassword(password);
 
-        const user = dbManager.create(UserEntity, {user_name, user_email, password : hashedPassword, avatar: ""});
+        const user = dbManager.create(UserEntity, {userName, userEmail, password : hashedPassword, avatar: ""});
         await dbManager.save(user); 
 
         const {accessToken, refreshToken, expires_in} = tokenService.generateTokens(user);
         await tokenService.saveToken(user, refreshToken);
 
+        try{
+            const { userId } = await dbManager.save(UserEntity, user);
+            if(!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}`)) {
+                fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}`)
+            }
+        } catch (e){
+            console.log(e);
+        }
+        
         return {...user, refreshToken, accessToken, expires_in}
     }
 
@@ -68,17 +78,24 @@ export class UserService{
         return await dbManager.find(UserEntity);
     }
 
-    async getUserById(id) {
+    async getUserById(id: string) {
         try {
             const user = await dbManager.findOne(UserEntity, {where : {id}});
             return user.user_name;
         } catch (e){
-            console.log(e)
-        }
+            console.log(e);
+            throw e;
+        }    
     }
 
 
-    async uploadAvatar(userId, url){
+    async saveAvatar(userId, url){
+        console.log("saveAvatarService")
+        if(!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}`))
+        {
+            fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}`); 
+        }
+        
         const user = await dbManager.find(UserEntity, {where: {id: userId}});
         user.avatar = `${process.env.DOMAIN}/users/avatar/${userId}`;
         const savedAvatar = await dbManager.save(UserEntity, user);

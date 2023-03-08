@@ -20,20 +20,21 @@ class VideoController {
         return __awaiter(this, void 0, void 0, function* () {
             const { title } = req.body;
             const { id } = req.params;
+            console.log(title);
             if (!title || !id) {
-                res.sendStatus(401).json({ error: `${title} - ${id}` });
+                res.status(401).json({ error: `${title} - ${id}` });
             }
             else {
                 try {
                     const filename = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
-                    const url = `${process.cwd()}/${process.env.STORAGE_PATH}/`;
+                    const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}/`;
                     const uploadedVideo = yield videoService.uploadVideo(id, title, url, filename);
                     res.json(uploadedVideo);
                 }
                 catch (e) {
                     next(e);
                     console.log(e);
-                    res.sendStatus(401);
+                    res.status(401);
                 }
             }
         });

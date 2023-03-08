@@ -96,10 +96,10 @@ class UserController {
             const { id } = req.params;
             try {
                 const userData = yield userService.getUserById(id);
-                if (userData.err) {
-                    return res.json({ err: "User not found" });
+                if (userData.error) {
+                    return res.json({ error: "User not found" });
                 }
-                return res.json({ id, user_email: userData });
+                return res.json({ id, user_name: userData });
             }
             catch (e) {
                 next(e);
@@ -110,14 +110,16 @@ class UserController {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const { userId } = req.params;
+            console.log("uploadAvatarController");
             if (!userId) {
                 res.sendStatus(401).json({ error: ` ${userId}` });
             }
             else {
                 try {
                     const filename = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
-                    const url = `${process.cwd()}/${process.env.AVATAR_PATH}/${userId}/${filename}`;
+                    const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/${filename}`;
                     const savedAvatar = yield userService.uploadAvatar(userId, url);
+                    console.log(savedAvatar);
                     res.json(savedAvatar);
                 }
                 catch (e) {
@@ -129,10 +131,12 @@ class UserController {
     }
     getAvatar(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const avatarPath = path_1.default.join(__dirname, "../avatarStorage");
-            const defaultAvatar = path_1.default.join(__dirname, "../avatarStorage/defaultAvatar.png");
+            console.log("getAvatarController");
+            const { userId } = req.params;
+            const avatarPath = path_1.default.join(__dirname, `../${userId}/Avatar/avatar.png`);
+            const defaultAvatar = path_1.default.join(__dirname, "../storage/defaultAvatar.png");
             try {
-                if (!fs_1.default.existsSync(avatarPath)) {
+                if (fs_1.default.existsSync(avatarPath)) {
                     const readStream = yield fs_1.default.createReadStream(avatarPath);
                     readStream.pipe(res);
                 }

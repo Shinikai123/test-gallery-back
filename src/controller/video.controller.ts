@@ -7,14 +7,18 @@ const videoService = new VideoService();
 
 export class VideoController {
     async uploadVideo(req: Request, res: Response, next: NextFunction) {
+        console.log(12213123321);
+        
         const {title} = req.body;
         const {id} = req.params;
+        console.log(title);
+        
         if(!title || !id) {
-            res.sendStatus(401).json({error: `${title} - ${id}`})
+            res.status(401).json({error: `${title} - ${id}`})
         } else {
             try{
                 const filename = req.file?.filename;
-                const url = `${process.cwd()}/${process.env.STORAGE_PATH}/`;
+                const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}/`;
                 const uploadedVideo = await videoService.uploadVideo(id, title, url, filename)
                 res.json(uploadedVideo);
             } catch (e) {

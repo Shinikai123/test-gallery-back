@@ -6,6 +6,11 @@ import * as fs from "fs"
 
 export class VideoService {
     async uploadVideo(id, title, url, filename){
+        if(!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}`))
+        {
+            fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}`)
+        }
+
         const newVideo = await dbManager.create(VideoEntity, {title, url, filename, owner: id});
         const savedVideo = await dbManager.save(VideoEntity, newVideo);
 
@@ -19,24 +24,24 @@ export class VideoService {
         return dbManager.delete(VideoEntity, {id})
     }
 
-    async getAccess(user_id : string, video_id: any) {
+    async getAccess(userId, videoId) {
         try{
-            const access = await dbManager.findOne(AccessEntity, {where: {user_id : user_id, video_id : video_id}})
+            const access = await dbManager.findOne(AccessEntity, {where: {user_id : userId, video_id : videoId}})
             if(!access) {
-                const getAccess = await dbManager.create(AccessEntity, {user_id: user_id, video_id: video_id, access: "denied"});
+                const getAccess = await dbManager.create(AccessEntity, {user_id: userId, video_id: videoId, access: "denied"});
                 await dbManager.save(AccessEntity, getAccess);
             }
-            return dbManager.findOne(AccessEntity, {where: {user_id : user_id, video_id : video_id}});
+            return dbManager.findOne(AccessEntity, {where: {user_id : userId, video_id : videoId}});
         } catch(e) {
             return(e)
         }
     }
 
     
-  async createStream(video_id, user_id) {
-    const video = await dbManager.findOne(VideoEntity, { where: { id: video_id } });
-    return fs.createReadStream(
-      `${process.cwd()}/${process.env.STORAGE_PATH}/${video.filename}`
+  async createStream(videoId, userId) {
+    const video = await dbManager.findOne(VideoEntity, { where: { id: videoId } });
+    return fs.createReadStream( 
+        `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.VIDEO_PATH}/${video.filename}`
     );
   }
 
@@ -52,18 +57,18 @@ export class VideoService {
         return await dbManager.update(VideoEntity, {id}, { title});
     }
 
-    async updateAccess(user_id, video_id, access) {
+    async updateAccess(userId, videoId, access) {
         if(access) {
             const currentAccess = await dbManager.findOne( AccessEntity, {
-                where: {user_id : user_id, video_id: video_id},
+                where: {user_id : userId, video_id: videoId},
             });
             if(access === AccessEnum.denied && currentAccess) {
                 return await dbManager.delete(AccessEntity, currentAccess)
             }
             if(!currentAccess) {
                 const newAccess = await dbManager.create(AccessEntity, {
-                    user_id: user_id,
-                    video_id: video_id,
+                    user_id: userId,
+                    video_id: videoId,
                     access: AccessEnum[access],
                 });
                 return await dbManager.save(AccessEntity, newAccess); 

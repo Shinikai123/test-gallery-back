@@ -41,6 +41,9 @@ const fs = __importStar(require("fs"));
 class VideoService {
     uploadVideo(id, title, url, filename) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}`)) {
+                fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}`);
+            }
             const newVideo = yield index_1.dbManager.create(index_2.VideoEntity, { title, url, filename, owner: id });
             const savedVideo = yield index_1.dbManager.save(index_2.VideoEntity, newVideo);
             const getAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: id, video_id: savedVideo.id, access: access_1.AccessEnum.full });
@@ -53,25 +56,25 @@ class VideoService {
             return index_1.dbManager.delete(index_2.VideoEntity, { id });
         });
     }
-    getAccess(user_id, video_id) {
+    getAccess(userId, videoId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const access = yield index_1.dbManager.findOne(index_3.AccessEntity, { where: { user_id: user_id, video_id: video_id } });
+                const access = yield index_1.dbManager.findOne(index_3.AccessEntity, { where: { user_id: userId, video_id: videoId } });
                 if (!access) {
-                    const getAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: user_id, video_id: video_id, access: "denied" });
+                    const getAccess = yield index_1.dbManager.create(index_3.AccessEntity, { user_id: userId, video_id: videoId, access: "denied" });
                     yield index_1.dbManager.save(index_3.AccessEntity, getAccess);
                 }
-                return index_1.dbManager.findOne(index_3.AccessEntity, { where: { user_id: user_id, video_id: video_id } });
+                return index_1.dbManager.findOne(index_3.AccessEntity, { where: { user_id: userId, video_id: videoId } });
             }
             catch (e) {
                 return (e);
             }
         });
     }
-    createStream(video_id, user_id) {
+    createStream(videoId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const video = yield index_1.dbManager.findOne(index_2.VideoEntity, { where: { id: video_id } });
-            return fs.createReadStream(`${process.cwd()}/${process.env.STORAGE_PATH}/${video.filename}`);
+            const video = yield index_1.dbManager.findOne(index_2.VideoEntity, { where: { id: videoId } });
+            return fs.createReadStream(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.VIDEO_PATH}/${video.filename}`);
         });
     }
     userVideo(id) {
@@ -88,19 +91,19 @@ class VideoService {
             return yield index_1.dbManager.update(index_2.VideoEntity, { id }, { title });
         });
     }
-    updateAccess(user_id, video_id, access) {
+    updateAccess(userId, videoId, access) {
         return __awaiter(this, void 0, void 0, function* () {
             if (access) {
                 const currentAccess = yield index_1.dbManager.findOne(index_3.AccessEntity, {
-                    where: { user_id: user_id, video_id: video_id },
+                    where: { user_id: userId, video_id: videoId },
                 });
                 if (access === access_1.AccessEnum.denied && currentAccess) {
                     return yield index_1.dbManager.delete(index_3.AccessEntity, currentAccess);
                 }
                 if (!currentAccess) {
                     const newAccess = yield index_1.dbManager.create(index_3.AccessEntity, {
-                        user_id: user_id,
-                        video_id: video_id,
+                        user_id: userId,
+                        video_id: videoId,
                         access: access_1.AccessEnum[access],
                     });
                     return yield index_1.dbManager.save(index_3.AccessEntity, newAccess);
