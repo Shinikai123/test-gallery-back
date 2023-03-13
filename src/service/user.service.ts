@@ -28,10 +28,10 @@ export class UserService{
         return {...tokens, ...user}
     }
 
-    async registerUser(userName, userEmail, password, ) {
+    async registerUser(user_name, user_email, password, ) {
         const hashedPassword = await hashPassword(password);
 
-        const user = dbManager.create(UserEntity, {userName, userEmail, password : hashedPassword, avatar: ""});
+        const user = dbManager.create(UserEntity, {user_name, user_email, password : hashedPassword, avatar: ""});
         await dbManager.save(user); 
 
         const {accessToken, refreshToken, expires_in} = tokenService.generateTokens(user);
@@ -96,10 +96,11 @@ export class UserService{
             fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}`); 
         }
         
-        const user = await dbManager.find(UserEntity, {where: {id: userId}});
+        const user = await dbManager.findOne(UserEntity, {where: {id: userId}});
         user.avatar = `${process.env.DOMAIN}/users/avatar/${userId}`;
         const savedAvatar = await dbManager.save(UserEntity, user);
 
+        console.log("user.avatar" + user.avatar)
         return savedAvatar;
     }
 

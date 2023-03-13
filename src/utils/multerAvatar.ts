@@ -1,4 +1,5 @@
 import multer from "multer";
+import {extname} from "path"; 
 import fsExtra from "fs-extra";
 import fs from "fs";
 
@@ -17,18 +18,16 @@ const storage = multer.diskStorage({
       cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}/${process.env.AVATAR_PATH}`); 
     },
     filename: (req, file, cb) => {
-      cb(null, `${file.originalname}`);
-    },
-  })
+      
+      const name = 'avatar';
+      const ext = extname(file.originalname);
+      if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+        return cb(new Error("Only images with .jpg, .jpeg and .png are allowed"), "");
+      } else {
+        cb(null, `${name}${ext}`);
+      }
+      },
 
-  const fileFilter = (req, file, cb) => {
-    if(file.mimetype === "image/png" ||
-       file.mimetype === "image/jpg" ||
-       file.mimetype === "image/jpeg" ) {
-        cb(null, true)
-       } else {
-        cb(new Error("incorrect file type"), false);
-       }
-  }
+  });
   
-  export const multerUploadAvatar = multer({storage, fileFilter});
+  export const multerUploadAvatar = multer({storage});

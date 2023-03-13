@@ -3,7 +3,6 @@ import {NextFunction, Request, Response} from "express";
 import { UserEntity } from "../entity/index";
 // import {TokenService} from "../service/token.service";
 import{UserService} from "../service/user.service";
-import path from "path";
 import fs from "fs";
 // import { userRepository } from "../repositories";
 
@@ -21,7 +20,9 @@ export class UserController {
         }
         const userData = await userService.registerUser(user_name, user_email, password)
 
-        res.cookie('refreshToken', userData.refreshToken, {maxAge: 24 * 60 * 60 *1000, httpOnly: true})
+        res.cookie('refreshToken', userData.refreshToken, 
+            {maxAge: 24 * 60 * 60 *1000,
+            httpOnly: true});
         return res.status(201).send({
             ...userData
         });
@@ -108,7 +109,8 @@ async uploadAvatar(req: Request, res:Response, next: NextFunction) {
 async getAvatar(req: Request, res: Response, next: NextFunction) {
     console.log("getAvatarController")
     const { userId } = req.params;
-    const avatarPath =  `${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/${req.file?.filename}`;
+    const ext = 'png' || 'jpg' || 'jpeg' ; 
+    const avatarPath =  `${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/avatar.${ext}`;
     const defaultAvatar =  `${process.env.STORAGE_PATH}/defaultAvatar.png`;
     try{
         if(fs.existsSync(avatarPath)){
@@ -119,7 +121,6 @@ async getAvatar(req: Request, res: Response, next: NextFunction) {
             const readStream = await fs.createReadStream(defaultAvatar);
             readStream.pipe(res)
         }
-        
     } catch(e) {
         console.log(e)
     }

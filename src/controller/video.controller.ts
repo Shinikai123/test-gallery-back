@@ -53,17 +53,17 @@ export class VideoController {
 
     
   async stream(req: Request, res: Response) {
-    const {video_id, user_id} = req.params;
-    const readStream = await videoService.createStream(video_id, user_id);
+    const {videoId, userId} = req.params;
+    const readStream = await videoService.createStream(videoId, userId);
 
     readStream.pipe(res);
   }
 
     async getAccess(req: Request, res: Response, next: NextFunction) {
         const {id} = req.params;
-        const {video_id} = req.query;
+        const {videoId} = req.query;
         try{
-            const access = await videoService.getAccess(id, video_id);
+            const access = await videoService.getAccess(id, videoId);
             console.log(access);
             res.json(access);
         } catch(e){
@@ -82,9 +82,9 @@ export class VideoController {
 
     async setAccess(req: Request, res: Response) {
         const {id} = req.params;
-        const {video_id, access} = req.body;
+        const {videoId, access} = req.body;
         console.log(id);
-        await videoService.updateAccess(id, video_id, access);
+        await videoService.updateAccess(id, videoId, access);
 
         return res.sendStatus(200);
     }
