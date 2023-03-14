@@ -97,7 +97,8 @@ export class UserService{
         }
         
         const user = await dbManager.findOne(UserEntity, {where: {id: userId}});
-        user.avatar = `${process.env.DOMAIN}/users/avatar/${userId}`;
+        user.avatar = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/`;
+        // user.avatar = `${process.env.DOMAIN}/users/avatar/${userId}`;
         const savedAvatar = await dbManager.save(UserEntity, user);
 
         console.log("user.avatar" + user.avatar)

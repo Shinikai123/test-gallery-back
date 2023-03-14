@@ -4,6 +4,7 @@ import fsExtra from "fs-extra";
 import fs from "fs";
 
 const storage = multer.diskStorage({
+
     destination: (req, file, cb) => {
      
       if(!fs.existsSync
@@ -27,6 +28,7 @@ const storage = multer.diskStorage({
         cb(null, `${name}${ext}`);
       }
       },
+      
 
   });
   
