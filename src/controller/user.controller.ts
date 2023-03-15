@@ -110,8 +110,8 @@ async getAvatar(req: Request, res: Response, next: NextFunction) {
     console.log("getAvatarController")
     const { userId } = req.params;
     const ext = 'png' || 'jpg' || 'jpeg' ; 
-    const avatarPath =  `${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/avatar.${ext}`;
-    const defaultAvatar =  `${process.env.STORAGE_PATH}/defaultAvatar.png`;
+    const avatarPath =  `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/avatar.${ext}`;
+    const defaultAvatar =  `${process.cwd()}/${process.env.STORAGE_PATH}/defaultAvatar.png`;
     try{
         if(fs.existsSync(avatarPath)){
             const readStream = await fs.createReadStream(avatarPath);
