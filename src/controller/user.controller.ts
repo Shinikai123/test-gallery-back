@@ -94,8 +94,9 @@ async uploadAvatar(req: Request, res:Response, next: NextFunction) {
     } else {
         try{
             const filename = req.file?.filename;
-            const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/${filename}`;
-            const savedAvatar = await userService.saveAvatar(userId, url);
+            console.log(filename)
+            //const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/${filename}`;
+            const savedAvatar = await userService.saveAvatar(userId, filename);
             console.log(savedAvatar);
             
             res.json(savedAvatar);
@@ -109,8 +110,12 @@ async uploadAvatar(req: Request, res:Response, next: NextFunction) {
 async getAvatar(req: Request, res: Response, next: NextFunction) {
     console.log("getAvatarController")
     const { userId } = req.params;
-    const ext = 'png' || 'jpg' || 'jpeg' ; 
-    const avatarPath =  `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/avatar.${ext}`;
+    console.log(`USERID`)
+    const user = await dbManager.findOne(UserEntity, {where: {id: userId}});
+    console.log( user);
+    //const ext = 'png' || 'jpg' || 'jpeg' ; 
+    const avatarPath = user.avatar;
+    // `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/avatar.${ext}`;  
     const defaultAvatar =  `${process.cwd()}/${process.env.STORAGE_PATH}/defaultAvatar.png`;
     try{
         if(fs.existsSync(avatarPath)){

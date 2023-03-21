@@ -37,10 +37,10 @@ class UserService {
             return Object.assign(Object.assign({}, tokens), user);
         });
     }
-    registerUser(userName, userEmail, password) {
+    registerUser(user_name, user_email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const hashedPassword = yield (0, bcrypt_1.hashPassword)(password);
-            const user = index_2.dbManager.create(index_1.UserEntity, { userName, userEmail, password: hashedPassword, avatar: "" });
+            const user = index_2.dbManager.create(index_1.UserEntity, { user_name, user_email, password: hashedPassword, avatar: "" });
             yield index_2.dbManager.save(user);
             const { accessToken, refreshToken, expires_in } = tokenService.generateTokens(user);
             yield tokenService.saveToken(user, refreshToken);
@@ -93,15 +93,17 @@ class UserService {
             }
         });
     }
-    uploadAvatar(userId, url) {
+    saveAvatar(userId, url) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("uploadAvatarService");
+            console.log("saveAvatarService");
             if (!fs_1.default.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}`)) {
                 fs_1.default.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}`);
             }
-            const user = yield index_2.dbManager.find(index_1.UserEntity, { where: { id: userId } });
-            user.avatar = `${process.env.DOMAIN}/users/avatar/${userId}`;
+            const user = yield index_2.dbManager.findOne(index_1.UserEntity, { where: { id: userId } });
+            user.avatar = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/`;
+            // user.avatar = `${process.env.DOMAIN}/users/avatar/${userId}`;
             const savedAvatar = yield index_2.dbManager.save(index_1.UserEntity, user);
+            console.log("user.avatar" + user.avatar);
             return savedAvatar;
         });
     }

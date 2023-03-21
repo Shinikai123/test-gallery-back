@@ -17,7 +17,6 @@ const __1 = require("..");
 const index_1 = require("../entity/index");
 // import {TokenService} from "../service/token.service";
 const user_service_1 = require("../service/user.service");
-const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 // import { userRepository } from "../repositories";
 // const tokenService = new TokenService();
@@ -32,7 +31,8 @@ class UserController {
                     return res.send({ error: 'User with this email already exists' });
                 }
                 const userData = yield userService.registerUser(user_name, user_email, password);
-                res.cookie('refreshToken', userData.refreshToken, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
+                res.cookie('refreshToken', userData.refreshToken, { maxAge: 24 * 60 * 60 * 1000,
+                    httpOnly: true });
                 return res.status(201).send(Object.assign({}, userData));
             }
             catch (e) {
@@ -110,7 +110,6 @@ class UserController {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const { userId } = req.params;
-            console.log("uploadAvatarController");
             if (!userId) {
                 res.sendStatus(401).json({ error: ` ${userId}` });
             }
@@ -118,7 +117,7 @@ class UserController {
                 try {
                     const filename = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
                     const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/${filename}`;
-                    const savedAvatar = yield userService.uploadAvatar(userId, url);
+                    const savedAvatar = yield userService.saveAvatar(userId, url);
                     console.log(savedAvatar);
                     res.json(savedAvatar);
                 }
@@ -133,8 +132,9 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("getAvatarController");
             const { userId } = req.params;
-            const avatarPath = path_1.default.join(__dirname, `../${userId}/Avatar/avatar.png`);
-            const defaultAvatar = path_1.default.join(__dirname, "../storage/defaultAvatar.png");
+            const ext = 'png' || 'jpg' || 'jpeg';
+            const avatarPath = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/avatar.${ext}`;
+            const defaultAvatar = `${process.cwd()}/${process.env.STORAGE_PATH}/defaultAvatar.png`;
             try {
                 if (fs_1.default.existsSync(avatarPath)) {
                     const readStream = yield fs_1.default.createReadStream(avatarPath);

@@ -39,9 +39,11 @@ export class UserService{
 
         try{
             const { userId } = await dbManager.save(UserEntity, user);
-            if(!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}`)) {
-                fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}`)
-            }
+            console.log("console user");
+            console.log(user);
+            // if(!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}`)) {
+                fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${user.id}`)
+            // }
         } catch (e){
             console.log(e);
         }
@@ -89,7 +91,7 @@ export class UserService{
     }
 
 
-    async saveAvatar(userId, url){
+    async saveAvatar(userId, filename){
         console.log("saveAvatarService")
         if(!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}`))
         {
@@ -97,7 +99,7 @@ export class UserService{
         }
         
         const user = await dbManager.findOne(UserEntity, {where: {id: userId}});
-        user.avatar = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/`;
+        user.avatar = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/${filename}`;
         // user.avatar = `${process.env.DOMAIN}/users/avatar/${userId}`;
         const savedAvatar = await dbManager.save(UserEntity, user);
 

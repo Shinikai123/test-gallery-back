@@ -18,6 +18,7 @@ class VideoController {
     uploadVideo(req, res, next) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(12213123321);
             const { title } = req.body;
             const { id } = req.params;
             console.log(title);
@@ -34,7 +35,7 @@ class VideoController {
                 catch (e) {
                     next(e);
                     console.log(e);
-                    res.status(401);
+                    res.sendStatus(401);
                 }
             }
         });
@@ -65,17 +66,17 @@ class VideoController {
     }
     stream(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { video_id, user_id } = req.params;
-            const readStream = yield videoService.createStream(video_id, user_id);
+            const { videoId, userId } = req.params;
+            const readStream = yield videoService.createStream(videoId, userId);
             readStream.pipe(res);
         });
     }
     getAccess(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const { video_id } = req.query;
+            const { videoId } = req.query;
             try {
-                const access = yield videoService.getAccess(id, video_id);
+                const access = yield videoService.getAccess(id, videoId);
                 console.log(access);
                 res.json(access);
             }
@@ -96,9 +97,9 @@ class VideoController {
     setAccess(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const { video_id, access } = req.body;
+            const { videoId, access } = req.body;
             console.log(id);
-            yield videoService.updateAccess(id, video_id, access);
+            yield videoService.updateAccess(id, videoId, access);
             return res.sendStatus(200);
         });
     }

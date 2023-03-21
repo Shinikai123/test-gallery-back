@@ -21,7 +21,7 @@ router.post('/upload/:id', multerVideo_1.multerUploadVideo.single('file'), video
 router.get('/users/:id/videos/', videoController.getVideos);
 router.post('/video/:id', videoController.updateVideo);
 router.delete('/delete/:id', videoController.deleteVideo);
-router.get('/users/:user_id/videos/:video_id/', videoController.stream);
+router.get('/users/:userId/videos/:videoId/', videoController.stream);
 router.get('/access/:id', videoController.getAccess);
 router.post('/access/:id', videoController.setAccess);
 exports.default = router;
