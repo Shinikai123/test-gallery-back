@@ -46,9 +46,11 @@ class UserService {
             yield tokenService.saveToken(user, refreshToken);
             try {
                 const { userId } = yield index_2.dbManager.save(index_1.UserEntity, user);
-                if (!fs_1.default.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}`)) {
-                    fs_1.default.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}`);
-                }
+                console.log("console user");
+                console.log(user);
+                // if(!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}`)) {
+                fs_1.default.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${user.id}`);
+                // }
             }
             catch (e) {
                 console.log(e);
@@ -93,14 +95,14 @@ class UserService {
             }
         });
     }
-    saveAvatar(userId, url) {
+    saveAvatar(userId, filename) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("saveAvatarService");
             if (!fs_1.default.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}`)) {
                 fs_1.default.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}`);
             }
             const user = yield index_2.dbManager.findOne(index_1.UserEntity, { where: { id: userId } });
-            user.avatar = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/`;
+            user.avatar = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/${filename}`;
             // user.avatar = `${process.env.DOMAIN}/users/avatar/${userId}`;
             const savedAvatar = yield index_2.dbManager.save(index_1.UserEntity, user);
             console.log("user.avatar" + user.avatar);

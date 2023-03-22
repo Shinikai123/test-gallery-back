@@ -116,8 +116,9 @@ class UserController {
             else {
                 try {
                     const filename = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
-                    const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/${filename}`;
-                    const savedAvatar = yield userService.saveAvatar(userId, url);
+                    console.log(filename);
+                    //const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/${filename}`;
+                    const savedAvatar = yield userService.saveAvatar(userId, filename);
                     console.log(savedAvatar);
                     res.json(savedAvatar);
                 }
@@ -132,8 +133,12 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("getAvatarController");
             const { userId } = req.params;
-            const ext = 'png' || 'jpg' || 'jpeg';
-            const avatarPath = `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/avatar.${ext}`;
+            console.log(`USERID`);
+            const user = yield __1.dbManager.findOne(index_1.UserEntity, { where: { id: userId } });
+            console.log(user);
+            //const ext = 'png' || 'jpg' || 'jpeg' ; 
+            const avatarPath = user.avatar;
+            // `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.AVATAR_PATH}/avatar.${ext}`;  
             const defaultAvatar = `${process.cwd()}/${process.env.STORAGE_PATH}/defaultAvatar.png`;
             try {
                 if (fs_1.default.existsSync(avatarPath)) {
