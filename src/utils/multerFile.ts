@@ -49,25 +49,31 @@ const storage = multer.diskStorage({
         console.log(req.params);
         if(!fs.existsSync
             (`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`)) {
-                fs.mkdirSync(
-                    `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`
-                )
+                fs.mkdirSync
+                (`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`)
             }
             cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`)
     },
     filename: (req, file, cb) => {
         const ext = extname(file.originalname)
-        try{
-            fs.unlinkSync(`avatar.${ext}`);
-        } catch (error) {
-            console.log(error);
-        }
-        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
-            return cb(new Error(`incorrect file extension`), "")
-        } else {
+        // try{
+        //     fs.unlinkSync(`avatar${ext}`);
+        // } catch (error) {
+        //     console.log(error);
+        // }
+
+        
+        // if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+        //     return cb(new Error(`incorrect file extension`), "")
+        // } else {
+        //     cb(null, `avatar${ext}`);
+        // }
+        // if(file.originalname.match(/\.(mp4|avi|webm)$/)){
+        //     cb(null, `${file.originalname}`)
+        // }
+        if(file.originalname.match(/\.(jpg|jpeg|png)$/)){
             cb(null, `avatar${ext}`);
-        }
-        if(file.originalname.match(/\.(mp4|avi|webm)$/)){
+        } else {
             cb(null, `${file.originalname}`)
         }
     }

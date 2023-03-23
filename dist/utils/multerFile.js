@@ -44,18 +44,33 @@ const fs_1 = __importDefault(require("fs"));
 // });
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
-        if (!fs_1.default.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.id}`)) {
-            fs_1.default.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.id}`);
+        console.log("storage");
+        console.log(req.params);
+        if (!fs_1.default.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`)) {
+            fs_1.default.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`);
         }
-        cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.id}`);
+        cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`);
     },
     filename: (req, file, cb) => {
         const ext = (0, path_1.extname)(file.originalname);
-        if (!file.originalname.match(/\.(jpg|jpeg|png|mp4|avi|webm)$/)) {
-            return cb(new Error(`incorrect file extension`), "");
+        // try{
+        //     fs.unlinkSync(`avatar${ext}`);
+        // } catch (error) {
+        //     console.log(error);
+        // }
+        // if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+        //     return cb(new Error(`incorrect file extension`), "")
+        // } else {
+        //     cb(null, `avatar${ext}`);
+        // }
+        // if(file.originalname.match(/\.(mp4|avi|webm)$/)){
+        //     cb(null, `${file.originalname}`)
+        // }
+        if (file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            cb(null, `avatar${ext}`);
         }
         else {
-            cb(null, `${file.originalname}${ext}`);
+            cb(null, `${file.originalname}`);
         }
     }
 });

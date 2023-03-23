@@ -6,9 +6,9 @@ import * as fs from "fs"
 
 export class VideoService {
     async uploadVideo(id, title, url, filename){
-        if(!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}`))
+        if(!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/`))
         {
-            fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}`)
+            fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/`)
         }
 
         const newVideo = await dbManager.create(VideoEntity, {title, url, filename, owner: id});
@@ -41,7 +41,7 @@ export class VideoService {
   async createStream(videoId, userId) {
     const video = await dbManager.findOne(VideoEntity, { where: { id: videoId } });
     return fs.createReadStream( 
-        `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.VIDEO_PATH}/${video.filename}`
+        `${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${video.filename}`
     );
   }
 

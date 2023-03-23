@@ -28,7 +28,7 @@ class VideoController {
             else {
                 try {
                     const filename = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
-                    const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}/`;
+                    const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${id}/`;
                     const uploadedVideo = yield videoService.uploadVideo(id, title, url, filename);
                     res.json(uploadedVideo);
                 }

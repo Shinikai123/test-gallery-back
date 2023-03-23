@@ -41,8 +41,8 @@ const fs = __importStar(require("fs"));
 class VideoService {
     uploadVideo(id, title, url, filename) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}`)) {
-                fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}`);
+            if (!fs.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/`)) {
+                fs.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${id}/`);
             }
             const newVideo = yield index_1.dbManager.create(index_2.VideoEntity, { title, url, filename, owner: id });
             const savedVideo = yield index_1.dbManager.save(index_2.VideoEntity, newVideo);
@@ -74,7 +74,7 @@ class VideoService {
     createStream(videoId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const video = yield index_1.dbManager.findOne(index_2.VideoEntity, { where: { id: videoId } });
-            return fs.createReadStream(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${process.env.VIDEO_PATH}/${video.filename}`);
+            return fs.createReadStream(`${process.cwd()}/${process.env.STORAGE_PATH}/${userId}/${video.filename}`);
         });
     }
     userVideo(id) {

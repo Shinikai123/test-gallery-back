@@ -18,7 +18,7 @@ export class VideoController {
         } else {
             try{
                 const filename = req.file?.filename;
-                const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${id}/${process.env.VIDEO_PATH}/`;
+                const url = `${process.cwd()}/${process.env.STORAGE_PATH}/${id}/`;
                 const uploadedVideo = await videoService.uploadVideo(id, title, url, filename)
                 res.json(uploadedVideo);
             } catch (e) {
