@@ -46,10 +46,10 @@ const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         console.log("storage");
         console.log(req.params);
-        if (!fs_1.default.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`)) {
-            fs_1.default.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`);
+        if (!fs_1.default.existsSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.id}`)) {
+            fs_1.default.mkdirSync(`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.id}`);
         }
-        cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`);
+        cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.id}`);
     },
     filename: (req, file, cb) => {
         const ext = (0, path_1.extname)(file.originalname);

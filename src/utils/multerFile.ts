@@ -48,11 +48,11 @@ const storage = multer.diskStorage({
         console.log("storage");
         console.log(req.params);
         if(!fs.existsSync
-            (`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`)) {
+            (`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.id}`)) {
                 fs.mkdirSync
-                (`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`)
+                (`${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.id}`)
             }
-            cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.userId}`)
+            cb(null, `${process.cwd()}/${process.env.STORAGE_PATH}/${req.params.id}`)
     },
     filename: (req, file, cb) => {
         const ext = extname(file.originalname)
